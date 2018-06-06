@@ -4,8 +4,11 @@ class GameState {
     this.actors = actors;
   }
 }
+
 /******************************************************************************/
+
 GameState.prototype.update = function(time){
+
   var actors = this.actors.map(function(actor){
     return actor.update(time);
   });

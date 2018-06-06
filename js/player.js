@@ -2,13 +2,13 @@ const playerInitialPosition = new Vector(450,300);
 const playerNormalSpeed     = new Vector(300,250);
 
 const playerSprites = DOM.createImg("img/Ships/player.png");
-const canvasWidth  = 900;
-const canvasHeight = 600;
 const playerWidth  = 16;
 const playerHeight = 24;
 const imgZoomX = 4;
 const imgZoomY = 3;
 const playerSize = new Vector(playerWidth * imgZoomX, playerHeight * imgZoomY);
+
+const laserBoltImg = DOM.createImg("img/Ships/laser-bolts.png");
 /******************************************************************************/
 
 //Return true if player still inside game box
@@ -20,6 +20,7 @@ function canMoveYAxis(newPosition){
 }
 
 /******************************************************************************/
+
 const noMovingSx = playerWidth*2;
 const noMovingSy = playerHeight;
 
@@ -37,35 +38,34 @@ const initialDrawArgs = {
 
 /******************************************************************************/
 
-class Player {
-  constructor(position,speed,drawArgs) {
-    this.position = position;
-    this.speed    = speed;
-    this.drawArgs = drawArgs
-  }
-
-  getDrawArgs(){
-    var drawArgsArray = [];
-
-    for(var prop in this.drawArgs){
-      drawArgsArray.push( this.drawArgs[prop] );
-    }
-
-    return drawArgsArray;
+class Player extends MovingObject{
+  constructor(position,speed,drawArgs){
+    super(position,speed,drawArgs)
   }
 
   static create(){
     return new Player(playerInitialPosition, playerNormalSpeed, initialDrawArgs);
   }
+
 }
 
 /******************************************************************************/
+
+Player.prototype.fireLaserBolt = function(){
+
+  const laserBolt = new MovingObject();
+  
+}
 
 Player.prototype.update = function(time){
 
   var position    = this.position;
   var newSpeed    = new Vector(0,0);
   var newDrawArgs = this.drawArgs;
+
+  if (gameKeys["ControlLeft"]){
+
+  }
 
   if (gameKeys["ArrowUp"]) {
     newSpeed.y = -playerNormalSpeed.y;
@@ -111,3 +111,5 @@ Player.prototype.update = function(time){
 
   return new Player(position, newSpeed, newDrawArgs);
 }
+
+/******************************************************************************/

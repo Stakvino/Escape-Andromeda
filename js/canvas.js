@@ -1,3 +1,6 @@
+const canvasWidth  = 900;
+const canvasHeight = 600;
+
 class Canvas {
   constructor(parent, gameState) {
     this.canvas = document.createElement("canvas");
@@ -14,11 +17,15 @@ class Canvas {
   }
 
 }
+
 /******************************************************************************/
+
 Canvas.prototype.drawBackground = function(){
 
 }
+
 /******************************************************************************/
+
 Canvas.prototype.drawActors = function(){
   var actors = this.gameState.actors;
 
@@ -26,6 +33,7 @@ Canvas.prototype.drawActors = function(){
     this.ctx.drawImage( ...actors[i].getDrawArgs() );
   }
 }
+
 /******************************************************************************/
 Canvas.prototype.update = function(){
   this.clear();

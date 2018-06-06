@@ -7,9 +7,13 @@ class Vector {
   plus(vector){
     return new Vector(this.x + vector.x, this.y + vector.y);
   }
+  times(number){
+    return new Vector(this.x * number, this.y * number);
+  }
 }
 
 /******************************************************************************/
+
 //Helpers for DOM manipulation
 const DOM = Object.create(null);
 
@@ -20,15 +24,16 @@ DOM.createImg = function(src){
 }
 
 /******************************************************************************/
+
 //Keyboard keys handler
-const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"];
+const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight",""];
 
 function trackKeys(keysArray){
   const keys = Object.create(null);
 
   function callback(event){
-    if ( keysArray.includes(event.key) ) {
-      keys[event.key] = event.type === "keydown";
+    if ( keysArray.includes(event.code) ) {
+      keys[event.code] = event.type === "keydown";
       event.preventDefault();
     }
   }
@@ -42,6 +47,7 @@ function trackKeys(keysArray){
 const gameKeys = trackKeys(keysArray);
 
 /******************************************************************************/
+
 //Function to control FPS and stop resume callback function in requestAnimationFrame
 function runAnimation(frameFunc,FPS) {
 
