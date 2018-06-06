@@ -81,13 +81,13 @@ Player.prototype.update = function(time){
   }
 
   if (gameKeys["ArrowLeft"]) {
-    //use auther 2 sprites on the left to animate left mouvement
+    //use other 2 sprites on the left to animate left mouvement
     if(this.drawArgs.sx > 0) newDrawArgs.sx -= playerWidth;
     newSpeed.x = -playerNormalSpeed.x;
   }
 
   if (gameKeys["ArrowRight"]) {
-    //use auther 2 sprites on the right to animate right mouvement
+    //use other 2 sprites on the right to animate right mouvement
     if(this.drawArgs.sx < playerWidth * 4) newDrawArgs.sx += playerWidth;
     newSpeed.x = playerNormalSpeed.x;
   }
