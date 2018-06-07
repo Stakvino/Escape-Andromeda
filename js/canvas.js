@@ -27,11 +27,14 @@ Canvas.prototype.drawBackground = function(){
 /******************************************************************************/
 
 Canvas.prototype.drawActors = function(){
-  var actors = this.gameState.actors;
+  var actors = this.gameState.actors.filter(function(actor){
+                                              return actor !== undefined;
+                                            });
 
   for (var i = 0; i < actors.length; i++) {
     this.ctx.drawImage( ...actors[i].getDrawArgs() );
   }
+
 }
 
 /******************************************************************************/

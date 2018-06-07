@@ -1,8 +1,8 @@
-const player = Player.create();
-const gameState = new GameState("playing",[player]);
-const canvas = new Canvas(document.querySelector("div.game-window"), gameState);
+const player  = Player.create();
+var gameState = new GameState("playing", [player]);
+const canvas  = new Canvas(document.querySelector("div.game-window"), gameState);
 
 runAnimation(function(timeStep){
-  canvas.gameState = canvas.gameState.update(timeStep);
+  gameState = gameState.update(timeStep, gameState);
   canvas.update();
 },60);

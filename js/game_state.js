@@ -7,13 +7,20 @@ class GameState {
 
 /******************************************************************************/
 
-GameState.prototype.update = function(time){
+GameState.prototype.update = function(time, gameState){
 
-  var actors = this.actors.map(function(actor){
-    return actor.update(time);
+  var newState = this;
+
+  var actors = [];
+
+  this.actors = this.actors.filter(function(actor){
+    return actor !== undefined;
   });
 
-  var newStatus = this.status;
+  for (var i = 0; i < this.actors.length; i++) {
+    actors.push( this.actors[i].update(time, gameState) );
+  }
 
-  return new GameState(newStatus, actors);
+  newState.actors = actors;
+  return newState;
 }

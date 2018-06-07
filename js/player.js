@@ -9,22 +9,13 @@ const imgZoomY = 3;
 const playerSize = new Vector(playerWidth * imgZoomX, playerHeight * imgZoomY);
 
 const laserBoltImg = DOM.createImg("img/Ships/laser-bolts.png");
-/******************************************************************************/
-
-//Return true if player still inside game box
-function canMoveXAxis(newPosition){
-  return newPosition.x >= 0 && newPosition.x + playerSize.x <= canvasWidth;
-}
-function canMoveYAxis(newPosition){
-  return newPosition.y >= 0 && newPosition.y + playerSize.y <= canvasHeight;
-}
-
+var playerCanFire = 0;
 /******************************************************************************/
 
 const noMovingSx = playerWidth*2;
 const noMovingSy = playerHeight;
 
-const initialDrawArgs = {
+const playerDrawArgs = {
   img : playerSprites,
   sx  : noMovingSx,
   sy  : noMovingSy,
@@ -36,36 +27,57 @@ const initialDrawArgs = {
   height : playerSize.y
 }
 
+const laserBoltDrawArgs = {
+  img : laserBoltImg,
+  sx  : 0,
+  sy  : 16,
+  swidth  : 16,
+  sheight : 16,
+  x : 0,
+  y : 0,
+  width  : 50,
+  height : 50
+}
+
 /******************************************************************************/
 
 class Player extends MovingObject{
-  constructor(position,speed,drawArgs){
-    super(position,speed,drawArgs)
+  constructor(position, speed, drawArgs){
+    super(position, speed, drawArgs);
+    this.position = position;
+    this.speed    = speed;
+    this.drawArgs = drawArgs;
   }
 
   static create(){
-    return new Player(playerInitialPosition, playerNormalSpeed, initialDrawArgs);
+    return new Player(playerInitialPosition, playerNormalSpeed, playerDrawArgs);
   }
 
 }
 
 /******************************************************************************/
 
-Player.prototype.fireLaserBolt = function(){
+Player.prototype.createLaserBolt = function(){
 
-  const laserBolt = new MovingObject();
-  
+  const position = this.position.plus( new Vector(playerSize.x/8, -playerSize.y/4) );
+  const drawArgs = copyObject(laserBoltDrawArgs);
+  drawArgs.x = this.position.x;
+  drawArgs.y = this.position.y;
+
+  return new MovingObject(position, new Vector(0, -600), drawArgs);
 }
 
-Player.prototype.update = function(time){
+Player.prototype.update = function(time, gameState){
 
   var position    = this.position;
   var newSpeed    = new Vector(0,0);
   var newDrawArgs = this.drawArgs;
 
-  if (gameKeys["ControlLeft"]){
-
+  if (gameKeys["ControlLeft"] && playerCanFire%10 === 0){
+    playerCanFire = 0;
+    gameState.actors.push( this.createLaserBolt() );
   }
+  playerCanFire++;
 
   if (gameKeys["ArrowUp"]) {
     newSpeed.y = -playerNormalSpeed.y;
@@ -99,12 +111,12 @@ Player.prototype.update = function(time){
 
   var movedX = position.plus( new Vector(newSpeed.x * time, 0) );
   //Upgrade position only if player didnt reach end of game border
-  if ( canMoveXAxis(movedX) ){
+  if ( canMoveXAxis(movedX, playerSize) ){
     position = movedX;
     newDrawArgs.x = position.x;
   }
   var movedY = position.plus( new Vector(0, newSpeed.y * time) );
-  if ( canMoveYAxis(movedY) ){
+  if ( canMoveYAxis(movedY, playerSize) ){
     position = movedY;
     newDrawArgs.y = position.y;
   }

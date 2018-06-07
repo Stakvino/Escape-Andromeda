@@ -26,7 +26,7 @@ DOM.createImg = function(src){
 /******************************************************************************/
 
 //Keyboard keys handler
-const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight",""];
+const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","ControlLeft"];
 
 function trackKeys(keysArray){
   const keys = Object.create(null);
@@ -71,4 +71,14 @@ function runAnimation(frameFunc,FPS) {
   }
 
   requestAnimationFrame(frame);
+}
+
+/******************************************************************************/
+
+function copyObject(obj){
+  var newObject = {};
+  for(var prop in obj){
+    newObject[prop] = obj[prop];
+  }
+  return newObject;
 }
