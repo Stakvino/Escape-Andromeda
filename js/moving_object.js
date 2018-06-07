@@ -5,6 +5,22 @@ class MovingObject {
     this.drawArgs = drawArgs;
   }
 
+  /*get sx of a given index : indexes depends on sprite position
+    indexX = 0 & indexY = 1 => in the first sprite (X = 0) of the second line(Y = 1)*/
+  getSpriteX(indexX){
+    return this.drawArgs.swidth * indexX;
+  }
+
+  getSpriteY(indexY){
+    return this.drawArgs.sheight * indexY;
+  }
+  //inverse of getSprite
+  getSpriteIndex(){
+    const drawArgs = this.drawArgs;
+    return {x : drawArgs.sx /drawArgs.swidth,
+            y : drawArgs.sy /drawArgs.sheight};
+  }
+
   getDrawArgs(){
     var drawArgsArray = [];
 
@@ -19,11 +35,17 @@ class MovingObject {
 
 /******************************************************************************/
 
+function objectOutOfScreen(newPosition, playerSize){
+
+  return newPosition.x >= canvasWidth  || newPosition.x <= -playerSize.x
+      || newPosition.y >= canvasHeight || newPosition.y <= -playerSize.y;
+}
+
 MovingObject.prototype.update = function(time, gameState){
 
   var newPosition = this.position.plus( this.speed.times(time) );
 
-  if ( canMoveXAxis(newPosition, playerSize) && canMoveYAxis(newPosition, playerSize) ){
+  if ( !objectOutOfScreen(newPosition, playerSize) ){
     var newDrawArgs = this.drawArgs;
     newDrawArgs.x = newPosition.x;
     newDrawArgs.y = newPosition.y;
@@ -37,11 +59,3 @@ MovingObject.prototype.update = function(time, gameState){
 }
 
 /******************************************************************************/
-
-//Return true if Object still inside game box
-function canMoveXAxis(newPosition, size){
-  return newPosition.x >= 0 && newPosition.x + size.x <= canvasWidth;
-}
-function canMoveYAxis(newPosition, size){
-  return newPosition.y >= 0 && newPosition.y + size.y <= canvasHeight;
-}

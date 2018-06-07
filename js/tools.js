@@ -82,3 +82,15 @@ function copyObject(obj){
   }
   return newObject;
 }
+
+function getRandomNumber(first, last, isDecimal = false){
+
+  if (isDecimal) {
+    return Math.random() * (last - first) + first;
+  }
+  return Math.floor( Math.random() * (last - first + 1) ) + first;
+}
+
+function getRandomElement(array){
+  return array[ Math.floor( Math.random() * array.length ) ];
+}
