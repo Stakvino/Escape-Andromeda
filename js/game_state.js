@@ -25,9 +25,6 @@ function getRandomBgImg(type){
 
 /******************************************************************************/
 
-const smallMteorImg = DOM.createImg("img/Meteors/Meteor2.png");
-const bigMteorImg   = DOM.createImg("img/Meteors/Meteor1.png");
-
 GameState.prototype.generateBackground = function(actors){
 
   const rand = getRandomNumber(0, 400);
@@ -48,13 +45,6 @@ GameState.prototype.generateBackground = function(actors){
     randomZoom = getRandomNumber(1/4, 2, true);
     speed = new Vector(getRandomNumber(50,200), backgroundSpeed.y);
   }
-  else if (rand > 397) {
-    randomImg  = smallMteorImg;
-    randomZoom = 4;
-    speed  = backgroundSpeed.plus( new Vector(0,200) );
-    type   = "meteor";
-    damage = 1;
-  }
   else {
     return ;
   }
@@ -74,17 +64,14 @@ GameState.prototype.generateBackground = function(actors){
   }
 
   const randomBackground = new MovingObject(position, speed, drawArgs, type);
-
   //add background img to the begining of actors array so that it will be drawn first
-  if (randomBackground.type === "background") {
-    actors.unshift(randomBackground);
-  }
+  actors.unshift(randomBackground);
 
 }
 
 /******************************************************************************/
 
-const smallMeteorImg = DOM.createImg("img/Meteors/Meteor2.png");
+const smallMeteorImg = DOM.createImg("img/Meteors/Meteor1.png");
 const meteorSizes    = ["small", "medium", "big"];
 
 GameState.prototype.generateMeteors = function(actors){
@@ -100,7 +87,7 @@ GameState.prototype.generateMeteors = function(actors){
   const speed  = backgroundSpeed.plus( new Vector(0,200) );
 
   const damage = meteorSizes.indexOf(size) + 1;
-  const zoom   = meteorSizes.indexOf(size) + 4;
+  const zoom   = meteorSizes.indexOf(size) + 2;
   const hp     = meteorSizes.indexOf(size) + 1;
 
   const randomXposition = getRandomNumber(0, canvasWidth - meteorImg.width);
@@ -191,15 +178,11 @@ GameState.prototype.update = function(time){
   var updatedActors = [];
 
   this.actors = this.actors.filter(actor => {
-    //if(actor.type !== "background" && actor.hp === 0) debugger;
-    return actor.type === "background" || (actor.hp > 0 || actor.takingDamage > 0);
+    return actor.type === "background" || actor.hp > 0 || actor.takingDamage > 0;
   });
 
   for (var i = 0; i < this.actors.length; i++) {
-    const act = this.actors[i];
-    //if(act.type !== "background" && act.hp === 0) debugger;
     updatedActors.push( this.actors[i].update(time, this) );
-    //if(act.type !== "background" && act.hp === 0) debugger;
   }
 
   this.updateCollisions(updatedActors);

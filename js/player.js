@@ -21,7 +21,6 @@ const playerDrawArgs = {
   height : playerSize.y
 }
 
-var playerCanFire = 0;
 const playerShipDamage = 3;
 const playerHp = 3;
 /******************************************************************************/
@@ -34,8 +33,9 @@ class Player extends SpaceShip{
   static create(){
     const weapon = {
       name    : "blue laser",
-      heat    : 20,
-      isReady : true
+      isReady : true,
+      timeBeforeReady : 0,
+      charingTime     : 0.25
     }
     return new Player(playerInitialPosition, playerNormalSpeed, playerDrawArgs,
                       "player", playerShipDamage, playerHp, 0, weapon);
@@ -54,8 +54,6 @@ function canMoveYAxis(newPosition, size){
 }
 
 /******************************************************************************/
-const weaponNormalHeat = 20;
-const weaponMaxHeat    = 30;
 
 Player.prototype.update = function(time, gameState){
 
@@ -63,29 +61,28 @@ Player.prototype.update = function(time, gameState){
   var newSpeed     = new Vector(0,0);
   var newDrawArgs  = this.drawArgs;
   var newHp        = this.hp;
-  var takingDamage = this.takingDamage;
 
-  const weapon = {
-    name    : this.weapon,
-    heat    : this.weaponHeat,
-    isReady : this.weaponReady
+  const weapon = this.weapon;
+
+  if (this.takingDamage > 0){
+    this.takingDamage -= time > this.takingDamage ? this.takingDamage : time;
   }
 
-  if (takingDamage > 0){
-    takingDamage -= time > takingDamage ? takingDamage : time;
+  if(this.hp === 0){
+    return this;
   }
 
   if (gameKeys["ControlLeft"] && weapon.isReady){
-    weapon.heat  = weaponMaxHeat;
+    weapon.timeBeforeReady  = weapon.charingTime;
     weapon.isReady = false;
     gameState.actors.push( this.createLaserBolt() );
   }
 
-  if(weapon.heat > weaponNormalHeat){
-    //decrease weapon heat with time untill it reaches the normal tempreture
-    weapon.heat -= weapon.heat >= weaponNormalHeat + 1 ? 1 : weapon.heat - weaponNormalHeat;
+  if(weapon.timeBeforeReady > 0){
+    weapon.timeBeforeReady -= time;
   }else {
     weapon.isReady = true;
+    weapon.timeBeforeReady = 0;
   }
 
 
@@ -135,9 +132,8 @@ Player.prototype.update = function(time, gameState){
     newDrawArgs.y = position.y;
   }
 
-
   return new Player(position, newSpeed, newDrawArgs, this.type, this.damage,
-                    newHp, takingDamage, weapon);
+                    newHp, this.takingDamage, weapon);
 }
 
 /******************************************************************************/

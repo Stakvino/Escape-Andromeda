@@ -29,7 +29,6 @@ class MovingObject {
             y : drawArgs.sy /drawArgs.sheight};
   }
 
-
 }
 
 /******************************************************************************/
@@ -59,15 +58,20 @@ MovingObject.prototype.collideWith = function(movingObject){
 
 MovingObject.prototype.tookDamageFrom = function(movingObject){
 
+  //if its the player who took damage wait a moment before he can take damage again
   if (this.type === "player") {
+
     if ( !this.takingDamage ){
+      this.damage = 0;
       this.hp -= movingObject.damage;
       if(this.hp < 0) this.hp = 0;
 
       movingObject.hp -= this.damage;
       if(movingObject.hp < 0) movingObject.hp = 0;
     }
+
   }
+  //if its another object just take damage without waiting
   else {
     this.hp -= movingObject.damage;
     if(this.hp < 0) this.hp = 0;
@@ -77,31 +81,29 @@ MovingObject.prototype.tookDamageFrom = function(movingObject){
   }
 
 
-  if ( !this.takingDamage )
+  if (!this.takingDamage && movingObject.damage){
+    if(this.type === "player")
+      this.damage = playerShipDamage;
+
     this.takingDamage = 1; //put some time before this can take damage again
+  }
+  if (!movingObject.takingDamage && this.damage){
+    movingObject.takingDamage = 1;
+  }
 
-  if ( !movingObject.takingDamage )
-    movingObject.takingDamage = 1
-
-  if(this.hp === 0)
+  if(this.hp === 0){
     this.damage = 0;
-
-  if(movingObject.hp === 0)
+  }
+  if(movingObject.hp === 0){
     movingObject.damage = 0;
-    
+  }
+
 }
 
 /******************************************************************************/
-MovingObject.prototype.update = function(time, gameState){
-  if(this.hp === 0){
-    if(this.type === "blue laser"){
-      this.takingDamage = 0;
-    }
-    else
-      this.takingDamage -= time*4;
 
-    return this;
-  }
+MovingObject.prototype.update = function(time, gameState){
+
   var speed = this.speed;
   var takingDamage = this.takingDamage;
   if (takingDamage > 0){
@@ -112,7 +114,9 @@ MovingObject.prototype.update = function(time, gameState){
     speed = backgroundSpeed.plus( new Vector(0 ,200) );
   }
 
-  var newPosition = this.position.plus( speed.times(time) );
+  var newPosition = this.position;
+  if(this.type === "background" || this.hp > 0)
+    newPosition = newPosition.plus( speed.times(time) );
 
   if ( !this.isOutOfScreen() ){
     const newDrawArgs = this.drawArgs;

@@ -32,12 +32,13 @@ const explosionDrawArgs = {
   height : 0
 }
 
-Canvas.prototype.drawExplosion = function(time, movingObject){
+Canvas.prototype.drawExplode = function(time, movingObject){
 
   const drawArgs = copyObject(explosionDrawArgs);
   drawArgs.x  = movingObject.position.x ;
   drawArgs.y  = movingObject.position.y ;
-  drawArgs.sx = (Math.floor( (1 - movingObject.takingDamage)/time )%5) * 16;
+  const spriteIndex = ( Math.floor( (1 - movingObject.takingDamage)/time )%5 );
+  drawArgs.sx = spriteIndex * 16;
   drawArgs.width = movingObject.drawArgs.width/1.5;
   drawArgs.height = movingObject.drawArgs.height/1.5;
 
@@ -51,13 +52,15 @@ Canvas.prototype.drawActors = function(time){
   const actors = cleanArray(this.gameState.actors);
 
   for (var i = 0; i < actors.length; i++) {
-    this.ctx.drawImage( ...getDrawArgs(actors[i].drawArgs) );
+    if(actors[i].type === "background" || actors[i].hp > 0){
+      this.ctx.drawImage( ...getDrawArgs(actors[i].drawArgs) );
+    }
   }
 
   const explodingObjects = actors.filter(actor => actor.takingDamage > 0);
 
   for (var i = 0; i < explodingObjects.length; i++) {
-    this.drawExplosion(time, explodingObjects[i] );
+    this.drawExplode(time, explodingObjects[i] );
   }
 
 }
@@ -75,8 +78,4 @@ Canvas.prototype.drawActorBorder = function(actor){
 Canvas.prototype.update = function(time){
   this.clear();
   this.drawActors(time);
-  //const player = getAllActorsWithTypes(this.gameState.actors, "player")[0];
-  //this.drawExplosion(player);
-  //this.drawActorBorder( getAllActorsWithTypes(this.gameState.actors, "player")[0] );
-  //this.drawActorBorder( getAllActorsWithTypes(this.gameState.actors, "meteor")[0] );
 }
