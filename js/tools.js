@@ -1,3 +1,6 @@
+const canvasWidth  = 900;
+const canvasHeight = 600;
+
 //Vector class to track position and speed
 class Vector {
   constructor(x,y) {

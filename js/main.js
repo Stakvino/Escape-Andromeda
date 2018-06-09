@@ -1,5 +1,6 @@
 const player  = Player.create();
-var gameState = new GameState("playing", [player]);
+const enemy   = MediumEnemy.create(new Vector(300,-100) );
+var gameState = new GameState("playing", [player,enemy]);
 const canvas  = new Canvas(document.querySelector("div.game-window"), gameState);
 
 runAnimation(function(timeStep){

@@ -62,12 +62,13 @@ MovingObject.prototype.tookDamageFrom = function(movingObject){
   if (this.type === "player") {
 
     if ( !this.takingDamage ){
-      this.damage = 0;
       this.hp -= movingObject.damage;
       if(this.hp < 0) this.hp = 0;
 
       movingObject.hp -= this.damage;
       if(movingObject.hp < 0) movingObject.hp = 0;
+
+      this.damage = 0;
     }
 
   }
@@ -85,10 +86,10 @@ MovingObject.prototype.tookDamageFrom = function(movingObject){
     if(this.type === "player")
       this.damage = playerShipDamage;
 
-    this.takingDamage = 1; //put some time before this can take damage again
+    this.takingDamage = 0.5; //put some time before this can take damage again
   }
   if (!movingObject.takingDamage && this.damage){
-    movingObject.takingDamage = 1;
+    movingObject.takingDamage = 0.5;
   }
 
   if(this.hp === 0){
@@ -105,6 +106,7 @@ MovingObject.prototype.tookDamageFrom = function(movingObject){
 MovingObject.prototype.update = function(time, gameState){
 
   var speed = this.speed;
+
   var takingDamage = this.takingDamage;
   if (takingDamage > 0){
     takingDamage -= time > takingDamage ? takingDamage : time;

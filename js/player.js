@@ -1,4 +1,4 @@
-const playerInitialPosition = new Vector(450,300);
+const playerInitialPosition = new Vector(450,500);
 const playerNormalSpeed     = new Vector(500,400);
 
 const playerSprites = DOM.createImg("img/Ships/player.png");
@@ -31,12 +31,14 @@ class Player extends SpaceShip{
   }
 
   static create(){
+
     const weapon = {
       name    : "blue laser",
       isReady : true,
       timeBeforeReady : 0,
       charingTime     : 0.25
     }
+
     return new Player(playerInitialPosition, playerNormalSpeed, playerDrawArgs,
                       "player", playerShipDamage, playerHp, 0, weapon);
   }
@@ -72,19 +74,8 @@ Player.prototype.update = function(time, gameState){
     return this;
   }
 
-  if (gameKeys["ControlLeft"] && weapon.isReady){
-    weapon.timeBeforeReady  = weapon.charingTime;
-    weapon.isReady = false;
-    gameState.actors.push( this.createLaserBolt() );
-  }
-
-  if(weapon.timeBeforeReady > 0){
-    weapon.timeBeforeReady -= time;
-  }else {
-    weapon.isReady = true;
-    weapon.timeBeforeReady = 0;
-  }
-
+  if (gameKeys["ControlLeft"])
+    this.fireGun(time, gameState, "up" );
 
   if (gameKeys["ArrowUp"]) {
     newSpeed.y = -playerNormalSpeed.y;

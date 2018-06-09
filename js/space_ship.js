@@ -29,12 +29,14 @@ const laserBoltDrawArgs = {
 
 /******************************************************************************/
 
-SpaceShip.prototype.createLaserBolt = function(){
+SpaceShip.prototype.createLaserBolt = function(direction){
 
   const position = this.position.plus( new Vector(playerSize.x/8, -playerSize.y/2) );
+  const speed    = direction === "up" ? new Vector(0, -600) : new Vector(0, 600);
+
   const drawArgs = copyObject(laserBoltDrawArgs);
-  drawArgs.x = position.x;
-  drawArgs.y = position.y;
+  drawArgs.x = position.x + drawArgs.width/2;
+  drawArgs.y = direction === "up" ? position.y - drawArgs.height/2 : position.y + drawArgs.height/2;
   var damage = 0;
 
   if (this.weapon.name === "red bolt") {
@@ -43,9 +45,30 @@ SpaceShip.prototype.createLaserBolt = function(){
     damage = 1;
   }
 
-  const laserBolt = new MovingObject(position, new Vector(0, -600), drawArgs, this.weapon.name, damage, 1);
+  const laserBolt = new MovingObject(position, speed, drawArgs, this.weapon.name, damage, 1);
   drawArgs.sx = laserBolt.getSpriteX(laserTypes[this.weapon.name].spriteIndex.x);
   drawArgs.sy = laserBolt.getSpriteY(laserTypes[this.weapon.name].spriteIndex.y);
 
   return laserBolt;
+}
+
+/******************************************************************************/
+
+SpaceShip.prototype.fireGun = function(time, gameState, direction){
+
+  const weapon = this.weapon;
+
+  if (weapon.isReady){
+    weapon.timeBeforeReady  = weapon.charingTime;
+    weapon.isReady = false;
+    gameState.actors.push( this.createLaserBolt(direction) );
+  }
+
+  if(weapon.timeBeforeReady > 0){
+    weapon.timeBeforeReady -= time;
+  }else {
+    weapon.isReady = true;
+    weapon.timeBeforeReady = 0;
+  }
+
 }

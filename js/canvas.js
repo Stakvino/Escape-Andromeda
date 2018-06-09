@@ -1,5 +1,3 @@
-const canvasWidth  = 900;
-const canvasHeight = 600;
 
 class Canvas {
   constructor(parent, gameState) {
