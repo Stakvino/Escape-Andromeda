@@ -1,7 +1,11 @@
 class SpaceShip extends MovingObject {
-  constructor(position, speed, drawArgs, damage, type, hp, takingDamage, weapon) {
-    super(position, speed, drawArgs, damage, type, hp, takingDamage, weapon);
-    this.weapon = weapon;
+  constructor(position, speed, drawArgs, type, damage, hp, takingDamage, weapon) {
+    super(position, speed, drawArgs, type, damage, hp, takingDamage, weapon);
+    this.weapon      = weapon.name;
+    /*when spaceship fire weaponHeat rise to a certain number and comes bacl to
+    the normal value again with time*/
+    this.weaponHeat  = weapon.heat;
+    this.weaponReady = weapon.isReady;
   }
 }
 
@@ -31,7 +35,7 @@ const laserBoltDrawArgs = {
 
 SpaceShip.prototype.createLaserBolt = function(){
 
-  const position = this.position.plus( new Vector(playerSize.x/8, -playerSize.y/4) );
+  const position = this.position.plus( new Vector(playerSize.x/8, -playerSize.y/2) );
   const drawArgs = copyObject(laserBoltDrawArgs);
   drawArgs.x = position.x;
   drawArgs.y = position.y;
@@ -43,7 +47,7 @@ SpaceShip.prototype.createLaserBolt = function(){
     damage = 1;
   }
 
-  const laserBolt = new MovingObject(position, new Vector(0, -600), drawArgs, damage, this.weapon);
+  const laserBolt = new MovingObject(position, new Vector(0, -600), drawArgs, this.weapon, damage, 1);
   drawArgs.sx = laserBolt.getSpriteX(laserTypes[this.weapon].spriteIndex.x);
   drawArgs.sy = laserBolt.getSpriteY(laserTypes[this.weapon].spriteIndex.y);
 

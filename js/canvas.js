@@ -19,74 +19,64 @@ class Canvas {
 }
 
 /******************************************************************************/
-const planetsImgs = ["Black hole.png", "Planet1.png", "Planet2.png"];
-const starsImgs   = ["Star.png", "Star2.png"];
+const explosionSprites = DOM.createImg("img/Ships/explosion.png");
+const explosionDrawArgs = {
+  img : explosionSprites,
+  sx  : 0,
+  sy  : 0,
+  swidth  : 16,
+  sheight : 16,
+  x : 0,
+  y : 0,
+  width  : 0,
+  height : 0
+}
 
-function getRandomBgImg(type){
-  var imgName = "";
+Canvas.prototype.drawExplosion = function(time, movingObject){
 
-  if (type === "star") {
-    imgName = getRandomElement(starsImgs);
-  }else {
-    imgName = getRandomElement(planetsImgs);
-  }
+  const drawArgs = copyObject(explosionDrawArgs);
+  drawArgs.x  = movingObject.position.x ;
+  drawArgs.y  = movingObject.position.y ;
+  drawArgs.sx = (Math.floor( (1 - movingObject.takingDamage)/time )%5) * 16;
+  drawArgs.width = movingObject.drawArgs.width/1.5;
+  drawArgs.height = movingObject.drawArgs.height/1.5;
 
-  return DOM.createImg("img/Background/" +  imgName);
+  this.ctx.drawImage( ...getDrawArgs(drawArgs) );
 }
 
 /******************************************************************************/
 
-Canvas.prototype.drawBackground = function(){
-  const rand = getRandomNumber(0, 400);
-  var randomImg  = null;
-  var randomZoom = null;
+Canvas.prototype.drawActors = function(time){
 
-  if (rand < 200) {
-    randomImg  = getRandomBgImg("star");
-    randomZoom = getRandomNumber(1/4, 1/2, true);
-  }
-  else if (rand > 395) {
-    randomImg  = getRandomBgImg("planet");
-    randomZoom = getRandomNumber(1/4, 2, true);
-  }
-  else {
-    return ;
-  }
-
-  const randomXposition = getRandomNumber(0, canvasWidth - randomImg.width);
-  const drawArgs = {
-    img : randomImg,
-    sx  : 0,
-    sy  : 0,
-    swidth  : randomImg.width,
-    sheight : randomImg.height,
-    x : randomXposition,
-    y : -randomImg.height,
-    width  : randomImg.width  * randomZoom,
-    height : randomImg.height * randomZoom
-  }
-
-  const randomBackground = new MovingObject(new Vector(randomXposition, -randomImg.height), new Vector(0, 400), drawArgs);
-  this.gameState.actors.unshift(randomBackground);
-
-}
-
-/******************************************************************************/
-
-Canvas.prototype.drawActors = function(){
-  var actors = this.gameState.actors.filter(function(actor){
-                                              return actor !== undefined;
-                                            });
+  const actors = cleanArray(this.gameState.actors);
 
   for (var i = 0; i < actors.length; i++) {
-    this.ctx.drawImage( ...actors[i].getDrawArgs() );
+    this.ctx.drawImage( ...getDrawArgs(actors[i].drawArgs) );
+  }
+
+  const explodingObjects = actors.filter(actor => actor.takingDamage > 0);
+
+  for (var i = 0; i < explodingObjects.length; i++) {
+    this.drawExplosion(time, explodingObjects[i] );
   }
 
 }
 
 /******************************************************************************/
-Canvas.prototype.update = function(){
+
+Canvas.prototype.drawActorBorder = function(actor){
+  if (actor) {
+    this.ctx.rect(actor.position.x, actor.position.y, actor.drawArgs.width, actor.drawArgs.height);
+    this.ctx.stroke();
+  }
+}
+
+/******************************************************************************/
+Canvas.prototype.update = function(time){
   this.clear();
-  this.drawBackground();
-  this.drawActors();
+  this.drawActors(time);
+  //const player = getAllActorsWithTypes(this.gameState.actors, "player")[0];
+  //this.drawExplosion(player);
+  //this.drawActorBorder( getAllActorsWithTypes(this.gameState.actors, "player")[0] );
+  //this.drawActorBorder( getAllActorsWithTypes(this.gameState.actors, "meteor")[0] );
 }

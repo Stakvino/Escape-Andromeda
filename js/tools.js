@@ -75,6 +75,18 @@ function runAnimation(frameFunc,FPS) {
 
 /******************************************************************************/
 
+function getDrawArgs(drawArgsObj){
+  var drawArgsArray = [];
+
+  for(var prop in drawArgsObj){
+    drawArgsArray.push( drawArgsObj[prop] );
+  }
+
+  return drawArgsArray;
+}
+
+/******************************************************************************/
+
 function copyObject(obj){
   var newObject = {};
   for(var prop in obj){
@@ -82,6 +94,8 @@ function copyObject(obj){
   }
   return newObject;
 }
+
+/******************************************************************************/
 
 function getRandomNumber(first, last, isDecimal = false){
 
@@ -93,4 +107,12 @@ function getRandomNumber(first, last, isDecimal = false){
 
 function getRandomElement(array){
   return array[ Math.floor( Math.random() * array.length ) ];
+}
+
+/******************************************************************************/
+
+function cleanArray(array){
+  return array.filter(function(element){
+    return element !== undefined && element !== null;
+  });
 }

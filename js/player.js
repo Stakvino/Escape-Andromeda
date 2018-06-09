@@ -12,47 +12,33 @@ const playerSize = new Vector(playerWidth * imgZoomX, playerHeight * imgZoomY);
 const playerDrawArgs = {
   img : playerSprites,
   sx  : playerWidth*2,
-  sy  : playerHeight,
+  sy  : playerHeight ,
   swidth  : playerWidth,
-  sheight : playerHeight,
+  sheight : playerHeight - 1,
   x : playerInitialPosition.x,
   y : playerInitialPosition.y,
   width  : playerSize.x,
   height : playerSize.y
 }
 
-
-const laserBoltImg = DOM.createImg("img/Ships/laser-bolts.png");
-
-const laserTypeIndex = {
-  "yellow bolt" : {x : 0, y : 0},
-  "red bolt"    : {x : 1, y : 0},
-  "blue laser"  : {x : 0, y : 1}
-}
-
 var playerCanFire = 0;
-const laserBoltDrawArgs = {
-  img : laserBoltImg,
-  sx  : 0,
-  sy  : 0,
-  swidth  : 16,
-  sheight : 16,
-  x : 0,
-  y : 0,
-  width  : 50,
-  height : 50
-}
-
+const playerShipDamage = 3;
+const playerHp = 3;
 /******************************************************************************/
 
-class Player extends MovingObject{
-  constructor(position, speed, drawArgs, weapon){
-    super(position, speed, drawArgs);
-    this.weapon = weapon;
+class Player extends SpaceShip{
+  constructor(position, speed, drawArgs, type, damage, hp, takingDamage, weapon){
+    super(position, speed, drawArgs, type, damage, hp, takingDamage, weapon);
   }
 
   static create(){
-    return new Player(playerInitialPosition, playerNormalSpeed, playerDrawArgs, "blue laser");
+    const weapon = {
+      name    : "blue laser",
+      heat    : 20,
+      isReady : true
+    }
+    return new Player(playerInitialPosition, playerNormalSpeed, playerDrawArgs,
+                      "player", playerShipDamage, playerHp, 0, weapon);
   }
 
 }
@@ -68,43 +54,50 @@ function canMoveYAxis(newPosition, size){
 }
 
 /******************************************************************************/
-
-Player.prototype.createLaserBolt = function(){
-
-  const position = this.position.plus( new Vector(playerSize.x/8, -playerSize.y/4) );
-  const drawArgs = copyObject(laserBoltDrawArgs);
-  drawArgs.x = position.x;
-  drawArgs.y = position.y;
-
-  const laserBolt = new MovingObject(position, new Vector(0, -600), drawArgs);
-  drawArgs.sx = laserBolt.getSpriteX(laserTypeIndex[this.weapon].x);
-  drawArgs.sy = laserBolt.getSpriteY(laserTypeIndex[this.weapon].y);
-
-  return laserBolt;
-}
-
-/******************************************************************************/
+const weaponNormalHeat = 20;
+const weaponMaxHeat    = 30;
 
 Player.prototype.update = function(time, gameState){
 
-  var position    = this.position;
-  var newSpeed    = new Vector(0,0);
-  var newDrawArgs = this.drawArgs;
-  var newWeapon   = this.weapon;
+  var position     = this.position;
+  var newSpeed     = new Vector(0,0);
+  var newDrawArgs  = this.drawArgs;
+  var newHp        = this.hp;
+  var takingDamage = this.takingDamage;
 
-  if (gameKeys["ControlLeft"] && playerCanFire%10 === 0){
-    playerCanFire = 0;
+  const weapon = {
+    name    : this.weapon,
+    heat    : this.weaponHeat,
+    isReady : this.weaponReady
+  }
+
+  if (takingDamage > 0){
+    takingDamage -= time > takingDamage ? takingDamage : time;
+  }
+
+  if (gameKeys["ControlLeft"] && weapon.isReady){
+    weapon.heat  = weaponMaxHeat;
+    weapon.isReady = false;
     gameState.actors.push( this.createLaserBolt() );
   }
-  playerCanFire++;
+
+  if(weapon.heat > weaponNormalHeat){
+    //decrease weapon heat with time untill it reaches the normal tempreture
+    weapon.heat -= weapon.heat >= weaponNormalHeat + 1 ? 1 : weapon.heat - weaponNormalHeat;
+  }else {
+    weapon.isReady = true;
+  }
+
 
   if (gameKeys["ArrowUp"]) {
     newSpeed.y = -playerNormalSpeed.y;
     /*use the 5 sprites on the top rather then the 5 on bottom if player click
       arrow up to have different animation*/
     newDrawArgs.sy = this.getSpriteY(0);
+    backgroundSpeed.y = 400;
   }else {
     newDrawArgs.sy = this.getSpriteY(1);
+    backgroundSpeed.y = 200;
   }
 
   if (gameKeys["ArrowDown"]) {
@@ -142,7 +135,9 @@ Player.prototype.update = function(time, gameState){
     newDrawArgs.y = position.y;
   }
 
-  return new Player(position, newSpeed, newDrawArgs, newWeapon);
+
+  return new Player(position, newSpeed, newDrawArgs, this.type, this.damage,
+                    newHp, takingDamage, weapon);
 }
 
 /******************************************************************************/
