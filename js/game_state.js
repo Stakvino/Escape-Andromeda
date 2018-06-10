@@ -3,7 +3,9 @@ class GameState {
     this.status = status;
     this.actors = actors;
   }
-
+  getPlayer(){
+    return getAllActorsWithTypes(this.actors, "player")[0]
+  }
 }
 
 /******************************************************************************/

@@ -23,7 +23,7 @@ const mediumDrawArgs = {
 
 const mediumShipDamage = 2;
 const mediumHp = 5;
-
+const mediumSpeed = new Vector(600, 50);
 /******************************************************************************/
 
 class MediumEnemy extends SpaceShip{
@@ -31,17 +31,18 @@ class MediumEnemy extends SpaceShip{
     super(position, speed, drawArgs, type, damage, hp, takingDamage, weapon);
   }
 
-  static create(position){
+  static create(position, speed, charingTime, laserSpeed){
 
     const weapon = {
       name    : "yellow bolt",
       isReady : true,
       timeBeforeReady : 0,
-      charingTime     : 0.5
+      charingTime     : charingTime,
+      laserSpeed      : laserSpeed
     }
 
-    return new MediumEnemy(position, new Vector(400,50), mediumDrawArgs,
-                      "enemy spaceship", mediumShipDamage, mediumHp, 0, weapon);
+    return new MediumEnemy(position, mediumSpeed, mediumDrawArgs, "enemy spaceship",
+                            mediumShipDamage, mediumHp, 0, weapon);
 
   }
 
@@ -51,7 +52,12 @@ class MediumEnemy extends SpaceShip{
 
 MediumEnemy.prototype.update = function(time, gameState){
 
-  this.fireGun(time, gameState, "down" );
+  if (gameState.getPlayer().position.y < this.position.y) {
+    this.fireGun(time, gameState,  new Vector(this.weapon.laserSpeed.x, -this.weapon.laserSpeed.y) );
+  }else {
+    this.fireGun(time, gameState,  this.weapon.laserSpeed );
+  }
+
 
   if (this.takingDamage > 0){
     this.takingDamage -= time > this.takingDamage ? this.takingDamage : time;
@@ -61,12 +67,10 @@ MediumEnemy.prototype.update = function(time, gameState){
     return this;
   }
 
-  if (this.position.x <= 5) {
-    this.speed.x = 400;
+  if (this.position.x <= 5 || this.position.x >= canvasWidth - this.drawArgs.width) {
+    this.speed = new Vector(-this.speed.x, this.speed.y);
   }
-  else if (this.position.x >= canvasWidth - this.drawArgs.width) {
-    this.speed.x = -400;
-  }
+
 
   newPosition = this.position.plus( this.speed.times(time) );
 
@@ -75,7 +79,8 @@ MediumEnemy.prototype.update = function(time, gameState){
     drawArgs.x = newPosition.x;
     drawArgs.y = newPosition.y;
 
-    return new MediumEnemy(newPosition,this.speed,drawArgs,"enemy spaceship",2,this.hp,0,this.weapon);
+    return new MediumEnemy(newPosition, this.speed, drawArgs, "enemy spaceship",mediumShipDamage ,
+                           this.hp ,0 , this.weapon);
   }
   else {
     var actors = gameState.actors;

@@ -19,24 +19,23 @@ const laserBoltDrawArgs = {
   img : laserBoltImg,
   sx  : 0,
   sy  : 0,
-  swidth  : 16,
-  sheight : 16,
+  swidth  : 7,
+  sheight : 14,
   x : 0,
   y : 0,
-  width  : 50,
+  width  : 30,
   height : 50
 }
 
 /******************************************************************************/
 
-SpaceShip.prototype.createLaserBolt = function(direction){
+SpaceShip.prototype.createLaserBolt = function(speed){
 
-  const position = this.position.plus( new Vector(playerSize.x/8, -playerSize.y/2) );
-  const speed    = direction === "up" ? new Vector(0, -600) : new Vector(0, 600);
-
+  const position = this.position.plus( new Vector(this.drawArgs.width/4, 0) );
+  position.y += speed.y > 0 ? this.drawArgs.height/1.5 : -this.drawArgs.height/1.5;
   const drawArgs = copyObject(laserBoltDrawArgs);
-  drawArgs.x = position.x + drawArgs.width/2;
-  drawArgs.y = direction === "up" ? position.y - drawArgs.height/2 : position.y + drawArgs.height/2;
+  drawArgs.x = position.x;
+  drawArgs.y = position.y;
   var damage = 0;
 
   if (this.weapon.name === "red bolt") {
@@ -46,7 +45,7 @@ SpaceShip.prototype.createLaserBolt = function(direction){
   }
 
   const laserBolt = new MovingObject(position, speed, drawArgs, this.weapon.name, damage, 1);
-  drawArgs.sx = laserBolt.getSpriteX(laserTypes[this.weapon.name].spriteIndex.x);
+  drawArgs.sx = laserBolt.getSpriteX(laserTypes[this.weapon.name].spriteIndex.x) + 5 ;
   drawArgs.sy = laserBolt.getSpriteY(laserTypes[this.weapon.name].spriteIndex.y);
 
   return laserBolt;

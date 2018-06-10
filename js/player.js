@@ -36,7 +36,8 @@ class Player extends SpaceShip{
       name    : "blue laser",
       isReady : true,
       timeBeforeReady : 0,
-      charingTime     : 0.25
+      charingTime     : 0.25,
+      laserSpeed      : new Vector(0, -600)
     }
 
     return new Player(playerInitialPosition, playerNormalSpeed, playerDrawArgs,
@@ -75,7 +76,7 @@ Player.prototype.update = function(time, gameState){
   }
 
   if (gameKeys["ControlLeft"])
-    this.fireGun(time, gameState, "up" );
+    this.fireGun(time, gameState, this.weapon.laserSpeed );
 
   if (gameKeys["ArrowUp"]) {
     newSpeed.y = -playerNormalSpeed.y;

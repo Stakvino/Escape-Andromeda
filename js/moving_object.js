@@ -83,10 +83,14 @@ MovingObject.prototype.tookDamageFrom = function(movingObject){
 
 
   if (!this.takingDamage && movingObject.damage){
-    if(this.type === "player")
-      this.damage = playerShipDamage;
 
-    this.takingDamage = 0.5; //put some time before this can take damage again
+    if(this.type === "player"){
+      this.damage = playerShipDamage;
+      this.takingDamage = 1;
+    }else {
+      this.takingDamage = 0.5; //put some time before this can take damage again
+    }
+
   }
   if (!movingObject.takingDamage && this.damage){
     movingObject.takingDamage = 0.5;
