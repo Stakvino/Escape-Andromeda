@@ -119,3 +119,24 @@ function cleanArray(array){
     return element !== undefined && element !== null;
   });
 }
+
+/******************************************************************************/
+
+function angleBetween(point1, point2){
+  const dy = point2.y - point1.y;
+  const dx = point2.x - point1.x;
+
+  return Math.atan2(dy,dx);
+}
+
+/******************************************************************************/
+
+function getVectorCord(magnitude, angle){
+  return new Vector(Math.cos(angle) * magnitude, Math.sin(angle) * magnitude);
+}
+
+/******************************************************************************/
+
+function vectorMagnitude(vector){
+  return Math.sqrt( Math.pow(vector.x, 2) +  Math.pow(vector.y, 2) );
+}

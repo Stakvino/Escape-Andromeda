@@ -4,30 +4,16 @@ class GameState {
     this.actors = actors;
   }
   getPlayer(){
-    return getAllActorsWithTypes(this.actors, "player")[0]
-  }
-}
-
-/******************************************************************************/
-
-const planetsImgs = ["Black hole.png", "Planet1.png", "Planet2.png"];
-const starsImgs   = ["Star.png", "Star2.png"];
-
-function getRandomBgImg(type){
-  var imgName = "";
-
-  if (type === "star") {
-    imgName = getRandomElement(starsImgs);
-  }else if (type === "planet") {
-    imgName = getRandomElement(planetsImgs);
+    return getAllActorsWithTypes(this.actors, "player")[0];
   }
 
-  return DOM.createImg("img/Background/" +  imgName);
 }
+
 
 /******************************************************************************/
 
 function getAllActorsWithTypes(actors, ...types){
+  
   actors = cleanArray(actors);
   var   result = [];
 
@@ -54,6 +40,7 @@ function getAllActorsExept(actors, ...types){
 /******************************************************************************/
 
 GameState.prototype.update = function(time){
+
   var newState = this;
   this.actors = cleanArray(this.actors);
   var updatedActors = [];

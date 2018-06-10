@@ -11,7 +11,7 @@ function updateCollisions(actors){
     }
 
     const blueLasers = getAllActorsWithTypes(actors, "blue laser");
-    const killables  = getAllActorsWithTypes(actors, "enemy spaceship", "meteor");
+    const killables  = getAllActorsWithTypes(actors, "small enemy", "medium enemy", "big enemy", "meteor");
 
     //Update player's lasers collisions with enemies
     for (var i = 0; i < killables.length; i++) {
@@ -22,6 +22,32 @@ function updateCollisions(actors){
           killable.tookDamageFrom(blueLaser);
       }
     }
+
+}
+
+/******************************************************************************/
+
+const planetsImgsNames = ["Black hole.png", "Planet1.png", "Planet2.png"];
+const starsImgsNames   = ["Star.png", "Star2.png"];
+
+const planetsImgs = [];
+const starsImgs   = [];
+
+for (var planetsImgsName  of planetsImgsNames) {
+  planetsImgs.push( DOM.createImg("img/Background/" +  planetsImgsName) );
+}
+
+for (var starsImgsName  of starsImgsNames) {
+  starsImgs.push( DOM.createImg("img/Background/" +  starsImgsName) );
+}
+
+function getRandomBgImg(type){
+
+  if (type === "star") {
+    return getRandomElement(starsImgs);
+  }else if (type === "planet") {
+    return getRandomElement(planetsImgs);
+  }
 
 }
 
@@ -53,17 +79,19 @@ function generateBackground(actors){
 
   const randomXposition = getRandomNumber(0, canvasWidth - randomImg.width);
   const position = new Vector(randomXposition, -randomImg.height);
+
   const drawArgs = {
-    img : randomImg,
-    sx  : 0,
-    sy  : 0,
-    swidth  : randomImg.width,
-    sheight : randomImg.height,
-    x : position.x,
-    y : position.y,
-    width  : randomImg.width  * randomZoom,
-    height : randomImg.height * randomZoom
-  }
+      img : randomImg,
+      sx  : 0,
+      sy  : 0,
+      swidth  : randomImg.width,
+      sheight : randomImg.height,
+      x : position.x,
+      y : position.y,
+      width  : randomImg.width  * randomZoom,
+      height : randomImg.height * randomZoom
+    };
+
 
   const randomBackground = new MovingObject(position, speed, drawArgs, type);
   //add background img to the begining of actors array so that it will be drawn first

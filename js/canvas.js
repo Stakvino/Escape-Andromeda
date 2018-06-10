@@ -45,14 +45,45 @@ Canvas.prototype.drawExplode = function(time, movingObject){
 
 /******************************************************************************/
 
+Canvas.prototype.drawWithRotation = function (actor, degrees){
+
+    const drawArgs = copyObject(actor.drawArgs);
+    drawArgs.x = -actor.drawArgs.width/2;
+    drawArgs.y = -actor.drawArgs.height/2;
+
+    //context.clearRect(0,0,canvas.width,canvas.height);
+    this.ctx.save();
+    this.ctx.translate(actor.position.x,actor.position.y);
+    this.ctx.translate(actor.drawArgs.width/2,actor.drawArgs.height/2);
+
+    this.ctx.rotate(degrees);
+
+    this.ctx.drawImage( ...getDrawArgs(drawArgs) );
+
+    this.ctx.restore();
+}
+
+/******************************************************************************/
+
 Canvas.prototype.drawActors = function(time){
 
   const actors = cleanArray(this.gameState.actors);
 
   for (var i = 0; i < actors.length; i++) {
+
     if(actors[i].type === "background" || actors[i].hp > 0){
-      this.ctx.drawImage( ...getDrawArgs(actors[i].drawArgs) );
+
+      if(actors[i].type === "small enemy"){
+        const angle =  angleBetween(new Vector(0,0), actors[i].speed) - Math.PI/2;
+        debugger;
+        this.drawWithRotation(actors[i], angle);
+      }
+      else{
+        this.ctx.drawImage( ...getDrawArgs(actors[i].drawArgs) );
+      }
+
     }
+
   }
 
   const explodingObjects = actors.filter(actor => actor.takingDamage > 0);
