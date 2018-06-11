@@ -70,7 +70,7 @@ SmallEnemy.prototype.update = function(time, gameState){
   this.fireGun(time, gameState,  laserSpeed );
 
   var newPosition = this.position;
-  if (vectorMagnitude(playerPosition.plus(this.position.times(-1) ) ) > 100 ) {
+  if (vectorMagnitude(playerPosition.plus(this.position.times(-1) ) ) > 200 ) {
     newPosition = this.position.plus( speed.times(time) );
   }
 
@@ -235,27 +235,17 @@ BigEnemy.prototype.update = function(time, gameState){
   if (this.position.x < player.position.x - 5) {
     this.speed = new Vector(bigSpeed.x, 0);
     newPosition = newPosition.plus( this.speed.times(time) );
-    this.weapon.charingTime = 2;
-    this.weapon.isReady = false;
   }
   else if (this.position.x > player.position.x) {
     this.speed = new Vector(-bigSpeed.x, 0);
     newPosition = newPosition.plus( this.speed.times(time) );
-    this.weapon.charingTime = 2;
-    this.weapon.isReady = false;
-  }
-  //charge and fire if at the same position as player
-  else {
-    if (this.weapon.charingTime > 0 && !this.weapon.isReady) {
-      this.chargingBlust(time, gameState);
-    }else {
-      this.fireBlust(time, gameState);
-    }
   }
 
-
+  this.chargingBlust(time, gameState);
+  this.fireBlust(time, gameState);
 
   if ( !this.isOutOfScreen() ){
+
     const drawArgs = copyObject(this.drawArgs);
     drawArgs.x = newPosition.x;
     drawArgs.y = newPosition.y;
@@ -263,6 +253,7 @@ BigEnemy.prototype.update = function(time, gameState){
 
     return new BigEnemy(newPosition, this.speed, drawArgs, "big enemy",mediumShipDamage ,
                            this.hp ,0 , this.weapon);
+
   }
   else {
     var actors = gameState.actors;
@@ -276,7 +267,7 @@ BigEnemy.prototype.update = function(time, gameState){
 BigEnemy.prototype.chargingBlust = function(time, gameState){
 
   if(this.weapon.isReady)
-    this.weapon.isReady = false;
+    return ;
 
   const position = this.position.plus( new Vector(this.drawArgs.width/3.8, this.drawArgs.height/1.4) );
 
@@ -309,9 +300,9 @@ const redBlastImg    = DOM.createImg("img/Ships/red-blast.png");
 BigEnemy.prototype.fireBlust = function(time, gameState){
 
   if(!this.weapon.isReady)
-    this.weapon.isReady = true;
+    return ;
 
-  const position = this.position.plus( new Vector(5, this.drawArgs.height) );
+  const position = this.position.plus( new Vector(8, this.drawArgs.height - 2) );
 
   const redOrYellowImg = getRandomElement( [redBlastImg, yellowBlastImg] );
 

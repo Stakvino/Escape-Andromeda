@@ -75,9 +75,9 @@ Canvas.prototype.drawActors = function(time){
 
       if(actors[i].type === "small enemy"){
         const angle =  angleBetween(new Vector(0,0), actors[i].speed) - Math.PI/2;
-        debugger;
         this.drawWithRotation(actors[i], angle);
       }
+
       else{
         this.ctx.drawImage( ...getDrawArgs(actors[i].drawArgs) );
       }
