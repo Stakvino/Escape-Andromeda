@@ -77,9 +77,10 @@ SmallEnemy.prototype.update = function(time, gameState){
 
   if ( !this.isOutOfScreen() ){
 
-    const drawArgs = copyObject(smallDrawArgs);
-    drawArgs.x = newPosition.x;
-    drawArgs.y = newPosition.y;
+    const drawArgs = copyObject(this.drawArgs);
+    drawArgs.x  = newPosition.x;
+    drawArgs.y  = newPosition.y;
+    drawArgs.sx = drawArgs.sx === 0 ? 16 : 0;
 
     return new SmallEnemy(newPosition, speed, drawArgs, "small enemy",smallShipDamage ,
                            this.hp ,0 , this.weapon);
@@ -158,9 +159,10 @@ MediumEnemy.prototype.update = function(time, gameState){
   newPosition = this.position.plus( this.speed.times(time) );
 
   if ( !this.isOutOfScreen() ){
-    const drawArgs = copyObject(mediumDrawArgs);
+    const drawArgs = copyObject(this.drawArgs);
     drawArgs.x = newPosition.x;
     drawArgs.y = newPosition.y;
+    drawArgs.sx = drawArgs.sx === 0 ? 32 : 0;
 
     return new MediumEnemy(newPosition, this.speed, drawArgs, "medium enemy",mediumShipDamage ,
                            this.hp ,0 , this.weapon);
@@ -173,3 +175,165 @@ MediumEnemy.prototype.update = function(time, gameState){
 }
 
 /******************************************************************************/
+
+const bigDrawArgs = {
+  img : bigEnemySprites,
+  sx  : 0,
+  sy  : 0,
+  swidth  : 32,
+  sheight : 32,
+  x : 0,
+  y : 0,
+  width  : 32 * enemyZoomX,
+  height : 32 * enemyZoomX
+}
+
+const bigShipDamage = 3;
+const bigHp = 15;
+const bigSpeed = new Vector(200, 0);
+/******************************************************************************/
+
+class BigEnemy extends SpaceShip{
+  constructor(position, speed, drawArgs, type, damage, hp, takingDamage, weapon){
+    super(position, speed, drawArgs, type, damage, hp, takingDamage, weapon);
+  }
+
+  static create(position, speed, charingTime, laserSpeed){
+
+    const weapon = {
+      name    : "yellow blast",
+      isReady : false,
+      timeBeforeReady : 0,
+      charingTime     : charingTime,
+      laserSpeed      : laserSpeed
+    }
+
+    return new BigEnemy(position, bigSpeed, bigDrawArgs, "big enemy",
+                            bigShipDamage, bigHp, 0, weapon);
+
+  }
+
+}
+
+/******************************************************************************/
+
+BigEnemy.prototype.update = function(time, gameState){
+
+
+  if (this.takingDamage > 0){
+    this.takingDamage -= time > this.takingDamage ? this.takingDamage : time;
+  }
+
+  if(this.hp === 0){
+    return this;
+  }
+
+  const player = gameState.getPlayer();
+  var newPosition = this.position;
+
+  //flow player
+  if (this.position.x < player.position.x - 5) {
+    this.speed = new Vector(bigSpeed.x, 0);
+    newPosition = newPosition.plus( this.speed.times(time) );
+    this.weapon.charingTime = 2;
+    this.weapon.isReady = false;
+  }
+  else if (this.position.x > player.position.x) {
+    this.speed = new Vector(-bigSpeed.x, 0);
+    newPosition = newPosition.plus( this.speed.times(time) );
+    this.weapon.charingTime = 2;
+    this.weapon.isReady = false;
+  }
+  //charge and fire if at the same position as player
+  else {
+    if (this.weapon.charingTime > 0 && !this.weapon.isReady) {
+      this.chargingBlust(time, gameState);
+    }else {
+      this.fireBlust(time, gameState);
+    }
+  }
+
+
+
+  if ( !this.isOutOfScreen() ){
+    const drawArgs = copyObject(this.drawArgs);
+    drawArgs.x = newPosition.x;
+    drawArgs.y = newPosition.y;
+    drawArgs.sx = drawArgs.sx === 0 ? 32 : 0;
+
+    return new BigEnemy(newPosition, this.speed, drawArgs, "big enemy",mediumShipDamage ,
+                           this.hp ,0 , this.weapon);
+  }
+  else {
+    var actors = gameState.actors;
+    actors[actors.indexOf(this)] = null;
+  }
+
+}
+
+/******************************************************************************/
+
+BigEnemy.prototype.chargingBlust = function(time, gameState){
+
+  if(this.weapon.isReady)
+    this.weapon.isReady = false;
+
+  const position = this.position.plus( new Vector(this.drawArgs.width/3.8, this.drawArgs.height/1.4) );
+
+  const drawArgs = copyObject(laserBoltDrawArgs);
+  drawArgs.x = position.x;
+  drawArgs.y = position.y;
+  drawArgs.width  += 20;
+  drawArgs.height += 20;
+  //draw yellow and red bolt to make charging laser naimation
+  const redOrYellowBolt = getRandomElement( ["red bolt", "yellow bolt"] );
+  const chargingBlast = new MovingObject(position, new Vector(0, 0), drawArgs, "charging blast", 0, 1);
+  drawArgs.sx = chargingBlast.getSpriteX(laserTypes[redOrYellowBolt].spriteIndex.x)*2 + 5 ;
+  drawArgs.sy = chargingBlast.getSpriteY(laserTypes[redOrYellowBolt].spriteIndex.y);
+
+  gameState.actors.push(chargingBlast);
+
+  this.weapon.charingTime -= time;
+
+  if(this.weapon.charingTime <= 0){
+    this.weapon.charingTime = 0;
+    this.weapon.isReady = true;
+  }
+
+}
+
+/******************************************************************************/
+const yellowBlastImg = DOM.createImg("img/Ships/yellow-blast.png");
+const redBlastImg    = DOM.createImg("img/Ships/red-blast.png");
+
+BigEnemy.prototype.fireBlust = function(time, gameState){
+
+  if(!this.weapon.isReady)
+    this.weapon.isReady = true;
+
+  const position = this.position.plus( new Vector(5, this.drawArgs.height) );
+
+  const redOrYellowImg = getRandomElement( [redBlastImg, yellowBlastImg] );
+
+  const drawArgs = copyObject(laserBoltDrawArgs);
+  drawArgs.img = redOrYellowImg;
+  drawArgs.x = position.x;
+  drawArgs.y = position.y;
+  drawArgs.swidth  = 36;
+  drawArgs.sheight = 47;
+  drawArgs.width  = 100;
+  drawArgs.height = 600;
+  //draw yellow and red bolt to make charging laser naimation
+  const laserBlast = new MovingObject(position, new Vector(0, 0), drawArgs, "laser blast", 3, 1);
+
+  gameState.actors.push(laserBlast);
+
+  this.weapon.charingTime += time;
+
+  if(this.weapon.charingTime >= 2){
+    this.weapon.charingTime = 2;
+    this.weapon.isReady = false;
+  }
+
+
+}

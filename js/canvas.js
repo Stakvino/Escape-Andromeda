@@ -86,6 +86,13 @@ Canvas.prototype.drawActors = function(time){
 
   }
 
+  this.gameState.actors = this.gameState.actors.map(actor => {
+                            if (actor && (actor.type === "charging blast" || actor.type === "laser blast") ) {
+                              return null;
+                            } else {
+                              return actor;
+                            }
+                          });
   const explodingObjects = actors.filter(actor => actor.takingDamage > 0);
 
   for (var i = 0; i < explodingObjects.length; i++) {

@@ -1,7 +1,7 @@
 const playerInitialPosition = new Vector(450,500);
 const playerNormalSpeed     = new Vector(500,400);
 
-const playerSprites = DOM.createImg("img/Ships/player.png");
+const playerSprites = DOM.createImg("img/Ships/ship.png");
 const playerWidth  = 16;
 const playerHeight = 24;
 const imgZoomX = 4;
@@ -14,7 +14,7 @@ const playerDrawArgs = {
   sx  : playerWidth*2,
   sy  : playerHeight ,
   swidth  : playerWidth,
-  sheight : playerHeight - 1,
+  sheight : playerHeight,
   x : playerInitialPosition.x,
   y : playerInitialPosition.y,
   width  : playerSize.x,
@@ -62,7 +62,7 @@ Player.prototype.update = function(time, gameState){
 
   var position     = this.position;
   var newSpeed     = new Vector(0,0);
-  var newDrawArgs  = this.drawArgs;
+  var newDrawArgs  = copyObject(this.drawArgs);
   var newHp        = this.hp;
 
   const weapon = this.weapon;
@@ -123,7 +123,9 @@ Player.prototype.update = function(time, gameState){
     position = movedY;
     newDrawArgs.y = position.y;
   }
-
+  //
+  newDrawArgs.sy = this.drawArgs.sy === 0 ? 24 : 0;
+  
   return new Player(position, newSpeed, newDrawArgs, this.type, this.damage,
                     newHp, this.takingDamage, weapon);
 }
