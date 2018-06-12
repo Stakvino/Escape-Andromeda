@@ -79,7 +79,12 @@ Canvas.prototype.drawActors = function(time){
       }
 
       else{
+        if(actors[i].type === "player" && actors[i].shadowForm.isActive){
+          this.ctx.save();
+          this.ctx.globalAlpha = 0.2;
+        }
         this.ctx.drawImage( ...getDrawArgs(actors[i].drawArgs) );
+        this.ctx.restore();
       }
 
     }

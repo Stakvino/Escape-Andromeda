@@ -29,7 +29,7 @@ DOM.createImg = function(src){
 /******************************************************************************/
 
 //Keyboard keys handler
-const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","ControlLeft"];
+const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","ControlLeft","Space"];
 
 function trackKeys(keysArray){
   const keys = Object.create(null);

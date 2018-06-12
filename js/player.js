@@ -23,11 +23,16 @@ const playerDrawArgs = {
 
 const playerShipDamage = 3;
 const playerHp = 3;
+const playerShadowForm = {
+  remaining : 10,
+  isActive  : false
+}
 /******************************************************************************/
 
 class Player extends SpaceShip{
-  constructor(position, speed, drawArgs, type, damage, hp, takingDamage, weapon){
+  constructor(position, speed, drawArgs, type, damage, hp, takingDamage, weapon, shadowForm){
     super(position, speed, drawArgs, type, damage, hp, takingDamage, weapon);
+    this.shadowForm = shadowForm;
   }
 
   static create(){
@@ -41,7 +46,7 @@ class Player extends SpaceShip{
     }
 
     return new Player(playerInitialPosition, playerNormalSpeed, playerDrawArgs,
-                      "player", playerShipDamage, playerHp, 0, weapon);
+                      "player", playerShipDamage, playerHp, 0, weapon, playerShadowForm);
   }
 
 }
@@ -107,6 +112,19 @@ Player.prototype.update = function(time, gameState){
     newSpeed.x = playerNormalSpeed.x;
   }
 
+  if (gameKeys["Space"]  && this.shadowForm.remaining >= time * 10) {
+    if(!this.shadowForm.isActive ){
+      this.shadowForm.isActive = true;
+    }
+    this.shadowForm.remaining -= (time * 10);
+  }else {
+    if(this.shadowForm.isActive){
+      this.shadowForm.isActive = false;
+    }
+    this.shadowForm.remaining += time;
+  }
+
+
   /*Stop right moving and left moving animation if both ArrowRight key and
     ArrowLeft key are not pressed*/
   if (!gameKeys["ArrowRight"] && !gameKeys["ArrowLeft"])
@@ -125,9 +143,13 @@ Player.prototype.update = function(time, gameState){
   }
   //
   newDrawArgs.sy = this.drawArgs.sy === 0 ? 24 : 0;
-  
+
   return new Player(position, newSpeed, newDrawArgs, this.type, this.damage,
-                    newHp, this.takingDamage, weapon);
+                    newHp, this.takingDamage, weapon, this.shadowForm);
 }
 
 /******************************************************************************/
+
+Player.prototype.shadowForm = function(){
+
+}
