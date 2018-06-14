@@ -129,7 +129,11 @@ MovingObject.prototype.update = function(time, gameState){
     const newDrawArgs = this.drawArgs;
     newDrawArgs.x = newPosition.x;
     newDrawArgs.y = newPosition.y;
-
+/*
+    if (this.type.search("laser") || this.type.search("bolt") ) {
+      newDrawArgs.sx = this.drawArgs === 0 ? 19 : 0;
+    }
+*/
     return new MovingObject(newPosition, this.speed, newDrawArgs,
                             this.type, this.damage, this.hp, takingDamage);
   }

@@ -26,6 +26,39 @@ DOM.createImg = function(src){
   return img;
 }
 
+const healthContainer = document.querySelector("div#health");
+const shadowContainer = document.querySelector("div#shadow_form");
+const laserContainer  = document.querySelector("div#laser-speed");
+
+DOM.addBar = function(container, type){
+  const div = document.createElement("div");
+
+  if (type === "health") {
+    div.className = "health-bar";
+  }
+  else if (type === "shadow") {
+    div.className = "shadow-bar";
+  }
+  else if (type === "laser speed") {
+    const img  = document.createElement("img");
+    div.width  = "12px";
+    div.height = "20px";
+    div.appendChild(img);
+  }
+
+  container.appendChild(div);
+}
+
+DOM.removeBar = function(container, type){
+
+  if (type === "health") {
+    container.children[container.children.length - 1];
+  }
+  else if (type === "shadow") {
+
+  }
+
+}
 /******************************************************************************/
 
 //Keyboard keys handler

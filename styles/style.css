@@ -1,8 +1,85 @@
+@font-face {
+  src: url("../font/emulogic.ttf");
+  font-family: "arcade font";
+}
+.hide
+{
+  display: none;
+}
+
 div.game-window
 {
   width: 900px;
   height: 600px;
-  margin: 1em auto 1em auto;
+  margin: 1em auto;
   background-color: #62225c;
   border:black solid 2px;
+  position: relative;
+}
+
+.ship-state
+{
+  display: flex;
+  flex-direction: column;
+  font-family: "arcade font";
+  width: 190px;
+  font-size: .8em;
+  position: absolute;
+  top:-2px;
+  left: -204px;
+  border:black solid 2px;
+  background-color: #62225c;
+  color: white;
+  padding: 5px;
+}
+.ship-state label
+{
+  margin-right: 1em;
+}
+div.health-container,
+div.shadow-container,
+div.laser-speed-container
+{
+  display: flex;
+  align-items: center;
+  padding: .5em;
+}
+div#health,
+div#shadow_form
+{
+  display: flex;
+  border: black solid 2px;
+}
+div#laser_speed
+{
+  font-family: sans-serif;
+  font-size: 0;
+}
+div#laser_speed img
+{
+  border:red solid 1px;
+}
+div.laser-speed-container label
+{
+  margin-right: 2em;
+}
+div.laser-speed-container div
+{
+  height: 20px;
+  width: 120px;
+  border:black solid 1px;
+}
+.health-bar
+{
+  background-color: red;
+  width: 20px;
+  height: 20px;
+  transition: opacity .5s;
+}
+.shadow-bar
+{
+  background-color: yellow;
+  width: 20px;
+  height: 20px;
+  transition: opacity .5s;
 }
