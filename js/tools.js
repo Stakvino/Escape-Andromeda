@@ -25,40 +25,70 @@ DOM.createImg = function(src){
   img.src = src;
   return img;
 }
-
+/******************************/
 const healthContainer = document.querySelector("div#health");
 const shadowContainer = document.querySelector("div#shadow_form");
-const laserContainer  = document.querySelector("div#laser-speed");
+const laserContainer  = document.querySelector("div#laser_speed");
+/******************************/
+DOM.addBar = function(type, number){
+  var container = null;
 
-DOM.addBar = function(container, type){
-  const div = document.createElement("div");
+  if (type === "health" || type === "shadow") {
+    container = type === "health" ? healthContainer  : shadowContainer;
+    className = type === "health" ? "health-bar" : "shadow-bar";
+
+    for (var i = 0; i < number; i++) {
+      const div = document.createElement("div");
+      div.className = className;
+      container.appendChild(div);
+    }
+
+  }
+
+  else if (type === "laser speed") {
+    container = laserContainer;
+
+    for (var i = 0; i < number; i++) {
+      const div = document.createElement("div");
+      div.className = "laser-div";
+      const img  = DOM.createImg("img/Ships/laser-icon.png");
+
+      img.addEventListener("load",function(){
+        this.width  = "12";
+        this.height = "20";
+        div.appendChild(this);
+        container.appendChild(div);
+      } );
+
+    }
+
+  }
+
+}
+/******************************/
+DOM.removeBar = function(type, number){
+
+  var container  = null;
+  const deleted  = [];
+  const children = container.children;
 
   if (type === "health") {
-    div.className = "health-bar";
+    container = healthContainer;
   }
   else if (type === "shadow") {
-    div.className = "shadow-bar";
+    container = shadowContainer;
   }
   else if (type === "laser speed") {
-    const img  = document.createElement("img");
-    div.width  = "12px";
-    div.height = "20px";
-    div.appendChild(img);
+    container = laserContainer;
   }
 
-  container.appendChild(div);
-}
-
-DOM.removeBar = function(container, type){
-
-  if (type === "health") {
-    container.children[container.children.length - 1];
-  }
-  else if (type === "shadow") {
-
+  for (var i = children.length - number; i < children.length; i++) {
+    children[i].style.opacity = "0";
+    deleted.push(children[i]);
   }
 
 }
+
 /******************************************************************************/
 
 //Keyboard keys handler

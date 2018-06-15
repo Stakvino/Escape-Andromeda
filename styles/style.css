@@ -50,14 +50,14 @@ div#shadow_form
   display: flex;
   border: black solid 2px;
 }
+div#health
+{
+  width: 60px;
+}
 div#laser_speed
 {
   font-family: sans-serif;
   font-size: 0;
-}
-div#laser_speed img
-{
-  border:red solid 1px;
 }
 div.laser-speed-container label
 {
@@ -79,7 +79,13 @@ div.laser-speed-container div
 .shadow-bar
 {
   background-color: yellow;
-  width: 20px;
+  width: 8px;
   height: 20px;
   transition: opacity .5s;
+}
+.laser-div
+{
+  width: 12px;
+  height: 20px;
+  display: inline;
 }

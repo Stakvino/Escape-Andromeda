@@ -116,12 +116,12 @@ Player.prototype.update = function(time, gameState){
     if(!this.shadowForm.isActive ){
       this.shadowForm.isActive = true;
     }
-    this.shadowForm.remaining -= (time * 10);
+    this.shadowForm.remaining -= 0.1;
   }else {
     if(this.shadowForm.isActive){
       this.shadowForm.isActive = false;
     }
-    this.shadowForm.remaining += time;
+    this.shadowForm.remaining += 0.01;
   }
 
 
