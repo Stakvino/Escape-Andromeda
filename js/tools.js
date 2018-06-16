@@ -26,11 +26,22 @@ DOM.createImg = function(src){
   return img;
 }
 /******************************/
+DOM.removeChildren = function(parent){
+
+  const children = Array.from(parent.children);
+
+  children.forEach(function(child){
+    parent.removeChild(child);
+  });
+
+}
+/******************************/
 const healthContainer = document.querySelector("div#health");
 const shadowContainer = document.querySelector("div#shadow_form");
 const laserContainer  = document.querySelector("div#laser_speed");
 /******************************/
 DOM.addBar = function(type, number){
+
   var container = null;
 
   if (type === "health" || type === "shadow") {
@@ -66,11 +77,9 @@ DOM.addBar = function(type, number){
 
 }
 /******************************/
-DOM.removeBar = function(type, number){
+DOM.modifyBar = function(type,from ,to ,action){
 
   var container  = null;
-  const deleted  = [];
-  const children = container.children;
 
   if (type === "health") {
     container = healthContainer;
@@ -78,13 +87,11 @@ DOM.removeBar = function(type, number){
   else if (type === "shadow") {
     container = shadowContainer;
   }
-  else if (type === "laser speed") {
-    container = laserContainer;
-  }
 
-  for (var i = children.length - number; i < children.length; i++) {
-    children[i].style.opacity = "0";
-    deleted.push(children[i]);
+  const children = container.children;
+
+  for (var i = from; i < to; i++) {
+    children[i].style.opacity = action === "lose" ? "0" : "1";
   }
 
 }

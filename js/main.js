@@ -10,11 +10,11 @@ const bigEnemy = BigEnemy.create(new Vector(-150, 0), bigSpeed, 2, 600);
 
 var gameState = new GameState("playing", [player,enemy1,enemy2,enemy3,enemy4,bigEnemy]);
 const canvas  = new Canvas(document.querySelector("div.game-window"), gameState);
-
+generateRessource("shadow", gameState.actors);
 /******************************************************************************/
 
 setTimeout(function(){
-  renderState(playerHp, playerShadowForm.remaining, 2);
+  renderState(playerHp, playerShadowForm.remaining/100, 1);
   runAnimation(function(timeStep){
     gameState = gameState.update(timeStep);
     canvas.update(timeStep);
@@ -25,6 +25,10 @@ setTimeout(function(){
 /******************************************************************************/
 
 function renderState(hp, shadowForm, laserSpeed){
+
+  DOM.removeChildren(healthContainer);
+  DOM.removeChildren(shadowContainer);
+  DOM.removeChildren(laserContainer);
 
   DOM.addBar("health", hp);
   DOM.addBar("shadow", shadowForm);

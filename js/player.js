@@ -24,7 +24,7 @@ const playerDrawArgs = {
 const playerShipDamage = 3;
 const playerHp = 3;
 const playerShadowForm = {
-  remaining : 10,
+  remaining : 1000,
   isActive  : false
 }
 /******************************************************************************/
@@ -45,8 +45,10 @@ class Player extends SpaceShip{
       laserSpeed      : new Vector(0, -600)
     }
 
+    const shadow = copyObject(playerShadowForm);
+
     return new Player(playerInitialPosition, playerNormalSpeed, playerDrawArgs,
-                      "player", playerShipDamage, playerHp, 0, weapon, playerShadowForm);
+                      "player", playerShipDamage, playerHp, 0, weapon, shadow);
   }
 
 }
@@ -59,6 +61,30 @@ function canMoveXAxis(newPosition, size){
 }
 function canMoveYAxis(newPosition, size){
   return newPosition.y >= 0 && newPosition.y + size.y <= canvasHeight;
+}
+
+/******************************************************************************/
+
+Player.prototype.tookRessource = function(ressourceType){
+
+  if ( ressourceType === "health ressource" ) {
+    const newHp = this.hp + 1 > playerHp ? playerHp : this.hp + 1;
+    DOM.modifyBar("health",this.hp ,this.hp + 1 , "recover");
+    this.hp += 1;
+  }
+  else if ( ressourceType === "shadow ressource" ) {
+    //Recover full shadow
+    DOM.modifyBar("shadow",0 ,playerShadowForm.remaining/100, "recover");
+    this.shadowForm.remaining = playerShadowForm.remaining;
+  }
+  else if ( ressourceType === "laser ressource" ) {
+    if (this.weapon.charingTime > 0.1) {
+      DOM.addBar("laser speed", 1);
+      this.weapon.charingTime -= 0.05;
+      this.weapon.charingTime = this.weapon.charingTime.toFixed(2);
+    }
+  }
+
 }
 
 /******************************************************************************/
@@ -112,16 +138,22 @@ Player.prototype.update = function(time, gameState){
     newSpeed.x = playerNormalSpeed.x;
   }
 
-  if (gameKeys["Space"]  && this.shadowForm.remaining >= time * 10) {
+  if (gameKeys["Space"]  && this.shadowForm.remaining >= 10) {
+
     if(!this.shadowForm.isActive ){
       this.shadowForm.isActive = true;
     }
-    this.shadowForm.remaining -= 0.1;
-  }else {
-    if(this.shadowForm.isActive){
-      this.shadowForm.isActive = false;
+    this.shadowForm.remaining -= 10;
+    if ( this.shadowForm.remaining % 100 === 0 ){
+      const from = this.shadowForm.remaining/100;
+      const to   = from + 1;
+      DOM.modifyBar("shadow",from ,to , "lose");
     }
-    this.shadowForm.remaining += 0.01;
+
+  }
+  else {
+    if(this.shadowForm.isActive)
+      this.shadowForm.isActive = false;
   }
 
 
@@ -146,10 +178,4 @@ Player.prototype.update = function(time, gameState){
 
   return new Player(position, newSpeed, newDrawArgs, this.type, this.damage,
                     newHp, this.takingDamage, weapon, this.shadowForm);
-}
-
-/******************************************************************************/
-
-Player.prototype.shadowForm = function(){
-
 }

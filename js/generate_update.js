@@ -23,6 +23,15 @@ function updateCollisions(actors){
       }
     }
 
+    const ressources = getAllActorsWithTypes(actors, "ressource");
+
+    for (var i = 0; i < ressources.length; i++) {
+      const ressource = ressources[i];
+      if (player && player.collideWith(ressource) ){
+        player.tookRessource(ressource.type);
+        actors[actors.indexOf(ressource)] = null;
+      }
+    }
 }
 
 /******************************************************************************/
@@ -136,4 +145,44 @@ function generateMeteors(actors){
 
   const meteor = new MovingObject(position, speed, drawArgs, "meteor", damage, hp, 0);
   actors.push(meteor);
+}
+
+/******************************************************************************/
+const ressourcesSprites  = DOM.createImg("img/Ships/power-up.png");
+const ressourcesDrawArgs = {
+  img : ressourcesSprites,
+  sx  : 0,
+  sy  : 0,
+  swidth  : 16,
+  sheight : 16,
+  x : 0,
+  y : -32,
+  width  : 50,
+  height : 50
+};
+
+function generateRessource(type, actors){
+
+  const drawArgs = copyObject(ressourcesDrawArgs);
+
+  if (type === "health") {
+    drawArgs.sx = 16;
+    drawArgs.sy = 16;
+  }
+  else if (type === "shadow") {
+    drawArgs.sy = 16;
+  }
+  else if (type === "laser") {
+
+  }
+
+  const randomX = getRandomNumber(50, canvasWidth - 50);
+  drawArgs.x = randomX
+  const position = new Vector(randomX, drawArgs.y);
+  const newType = type + " ressource";
+
+  const ressource = new MovingObject(position, backgroundSpeed, drawArgs, newType, 0, 1);
+
+  actors.push(ressource);
+
 }

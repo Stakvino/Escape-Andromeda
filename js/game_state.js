@@ -13,12 +13,12 @@ class GameState {
 /******************************************************************************/
 
 function getAllActorsWithTypes(actors, ...types){
-  
+
   actors = cleanArray(actors);
   var   result = [];
 
   for (var i = 0; i < types.length; i++) {
-    result = result.concat( actors.filter(actor => actor.type === types[i]) );
+    result = result.concat( actors.filter(actor => actor.type.includes(types[i]) ) );
   }
 
   return result;

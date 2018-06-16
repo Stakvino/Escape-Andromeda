@@ -98,6 +98,7 @@ Canvas.prototype.drawActors = function(time){
                               return actor;
                             }
                           });
+                          
   const explodingObjects = actors.filter(actor => actor.takingDamage > 0);
 
   for (var i = 0; i < explodingObjects.length; i++) {

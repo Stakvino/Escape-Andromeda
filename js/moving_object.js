@@ -63,8 +63,11 @@ MovingObject.prototype.tookDamageFrom = function(movingObject){
   if (this.type === "player") {
 
     if ( !this.takingDamage ){
-      this.hp -= movingObject.damage;
-      if(this.hp < 0) this.hp = 0;
+
+      var newHp = this.hp - movingObject.damage;
+      if (newHp < 0) newHp = 0;
+      DOM.modifyBar("health",newHp ,this.hp , "lose");
+      this.hp = newHp;
 
       movingObject.hp -= this.damage;
       if(movingObject.hp < 0) movingObject.hp = 0;
@@ -126,15 +129,10 @@ MovingObject.prototype.update = function(time, gameState){
     newPosition = newPosition.plus( speed.times(time) );
 
   if ( !this.isOutOfScreen() ){
-    const newDrawArgs = this.drawArgs;
-    newDrawArgs.x = newPosition.x;
-    newDrawArgs.y = newPosition.y;
-/*
-    if (this.type.search("laser") || this.type.search("bolt") ) {
-      newDrawArgs.sx = this.drawArgs === 0 ? 19 : 0;
-    }
-*/
-    return new MovingObject(newPosition, this.speed, newDrawArgs,
+    this.drawArgs.x = newPosition.x;
+    this.drawArgs.y = newPosition.y;
+
+    return new MovingObject(newPosition, this.speed, this.drawArgs,
                             this.type, this.damage, this.hp, takingDamage);
   }
   else {

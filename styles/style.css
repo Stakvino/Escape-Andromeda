@@ -45,10 +45,16 @@ div.laser-speed-container
   padding: .5em;
 }
 div#health,
-div#shadow_form
+div#shadow_form,
+div#laser_speed
 {
   display: flex;
+  height: 20px;
   border: black solid 2px;
+}
+div#shadow_form
+{
+  width: 80px;
 }
 div#health
 {
@@ -56,32 +62,26 @@ div#health
 }
 div#laser_speed
 {
-  font-family: sans-serif;
+  width: 48px;
   font-size: 0;
 }
 div.laser-speed-container label
 {
   margin-right: 2em;
 }
-div.laser-speed-container div
-{
-  height: 20px;
-  width: 120px;
-  border:black solid 1px;
-}
 .health-bar
 {
   background-color: red;
   width: 20px;
   height: 20px;
-  transition: opacity .5s;
+  transition: opacity .2s;
 }
 .shadow-bar
 {
   background-color: yellow;
   width: 8px;
   height: 20px;
-  transition: opacity .5s;
+  transition: opacity .2s;
 }
 .laser-div
 {
