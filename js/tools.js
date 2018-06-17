@@ -89,7 +89,7 @@ DOM.modifyBar = function(type,from ,to ,action){
   }
 
   const children = container.children;
-
+  
   for (var i = from; i < to; i++) {
     children[i].style.opacity = action === "lose" ? "0" : "1";
   }

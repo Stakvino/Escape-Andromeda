@@ -161,7 +161,7 @@ const ressourcesDrawArgs = {
   height : 50
 };
 
-function generateRessource(type, actors){
+function generateRessource(type, positionX){
 
   const drawArgs = copyObject(ressourcesDrawArgs);
 
@@ -172,17 +172,117 @@ function generateRessource(type, actors){
   else if (type === "shadow") {
     drawArgs.sy = 16;
   }
-  else if (type === "laser") {
 
-  }
-
-  const randomX = getRandomNumber(50, canvasWidth - 50);
-  drawArgs.x = randomX
-  const position = new Vector(randomX, drawArgs.y);
+  drawArgs.x = positionX;
+  const position = new Vector(positionX, drawArgs.y);
   const newType = type + " ressource";
 
   const ressource = new MovingObject(position, backgroundSpeed, drawArgs, newType, 0, 1);
 
-  actors.push(ressource);
+  return ressource;
+
+}
+
+/******************************************************************************/
+
+function generateWave(waveArray, actors){
+
+  for (var i = 0; i < waveArray.length; i++) {
+    const positionX = (i + 1) * ( canvasWidth / (waveArray.length + 1) );
+    var actor = null;
+
+    if (waveArray[i] === "S") {
+      actor = SmallEnemy.create(positionX, smallSpeed, 0.6, 600);
+    }
+    else if (waveArray[i] === "M") {
+      actor = MediumEnemy.create(positionX, mediumSpeed, 0.6, 600);
+    }
+    else if (waveArray[i] === "B") {
+      actor = BigEnemy.create(positionX, bigSpeed, 2, 600);
+    }
+    else if (waveArray[i] === "HR") {
+      actor = generateRessource("health", positionX);
+    }
+    else if (waveArray[i] === "SR") {
+      actor = generateRessource("shadow", positionX);
+    }
+    else if (waveArray[i] === "LR") {
+      actor = generateRessource("laser speed", positionX);
+    }
+
+    actors.push(actor);
+  }
+
+}
+
+/******************************************************************************/
+var waveNumber = -1;
+
+function generateLevel(level, actors){
+
+  if ( waveNumber === -1 || waveFinished(actors, level[waveNumber]) ) {
+    waveNumber++;
+    generateWave(level[waveNumber], actors);
+  }
+
+}
+
+/******************************************************************************/
+
+function waveFinished(actors, wave){
+
+  actors = cleanArray(actors);
+
+  const actorTypes = waveToTypes(wave);
+  const remaining  = actors.filter(function(actor){
+                      for (var i = 0; i < actorTypes.length; i++) {
+                        if(actorTypes[i] === actor.type)
+                          return true;
+                      }
+                      return false;
+                    });
+
+   return !remaining.length;
+}
+
+/******************************************************************************/
+
+function waveToTypes(wave){
+
+  return wave.map(function(actorSymbol){
+
+    switch (actorSymbol) {
+
+      case "S":
+        return "small enemy";
+        break;
+
+      case "M":
+        return "medium enemy";
+        break;
+
+      case "B":
+        return "big enemy";
+        break;
+
+      case "HR":
+        return "health ressource";
+        break;
+
+      case "SR":
+        return "shadow ressource";
+        break;
+
+      case "LR":
+        return "laser speed ressource";
+        break;
+
+      default:
+        return "space";
+        break;
+
+    }
+
+  });
 
 }

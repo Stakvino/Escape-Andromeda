@@ -31,7 +31,7 @@ class SmallEnemy extends SpaceShip{
     super(position, speed, drawArgs, type, damage, hp, takingDamage, weapon);
   }
 
-  static create(position, speed, charingTime, laserSpeed){
+  static create(positionX, speed, charingTime, laserSpeed){
 
     const weapon = {
       name    : "red bolt",
@@ -41,8 +41,8 @@ class SmallEnemy extends SpaceShip{
       laserSpeed      : laserSpeed
     }
 
-    return new SmallEnemy(position, smallSpeed, smallDrawArgs, "small enemy",
-                            smallShipDamage, smallHp, 0, weapon);
+    return new SmallEnemy( new Vector(positionX, -50), smallSpeed, smallDrawArgs,
+                           "small enemy",smallShipDamage, smallHp, 0, weapon );
 
   }
 
@@ -116,7 +116,7 @@ class MediumEnemy extends SpaceShip{
     super(position, speed, drawArgs, type, damage, hp, takingDamage, weapon);
   }
 
-  static create(position, speed, charingTime, laserSpeed){
+  static create(positionX, speed, charingTime, laserSpeed){
 
     const weapon = {
       name    : "yellow bolt",
@@ -126,8 +126,8 @@ class MediumEnemy extends SpaceShip{
       laserSpeed      : laserSpeed
     }
 
-    return new MediumEnemy(position, mediumSpeed, mediumDrawArgs, "medium enemy",
-                            mediumShipDamage, mediumHp, 0, weapon);
+    return new MediumEnemy( new Vector(positionX, -50), mediumSpeed, mediumDrawArgs,
+                            "medium enemy",mediumShipDamage, mediumHp, 0, weapon);
 
   }
 
@@ -190,7 +190,7 @@ const bigDrawArgs = {
 
 const bigShipDamage = 3;
 const bigHp = 15;
-const bigSpeed = new Vector(200, 0);
+const bigSpeed = 200;
 /******************************************************************************/
 
 class BigEnemy extends SpaceShip{
@@ -198,7 +198,7 @@ class BigEnemy extends SpaceShip{
     super(position, speed, drawArgs, type, damage, hp, takingDamage, weapon);
   }
 
-  static create(position, speed, charingTime, laserSpeed){
+  static create(positionX, speed, charingTime, laserSpeed){
 
     const weapon = {
       name    : "yellow blast",
@@ -208,8 +208,8 @@ class BigEnemy extends SpaceShip{
       laserSpeed      : laserSpeed
     }
 
-    return new BigEnemy(position, bigSpeed, bigDrawArgs, "big enemy",
-                            bigShipDamage, bigHp, 0, weapon);
+    return new BigEnemy( new Vector(positionX, -150), new Vector(0, 0), bigDrawArgs,
+                         "big enemy",bigShipDamage, bigHp, 0, weapon );
 
   }
 
@@ -230,16 +230,24 @@ BigEnemy.prototype.update = function(time, gameState){
 
   const player = gameState.getPlayer();
   var newPosition = this.position;
+  var newSpeed    = new Vector(0, 0);
 
   //flow player
-  if (this.position.x < player.position.x - 5) {
-    this.speed = new Vector(bigSpeed.x, 0);
-    newPosition = newPosition.plus( this.speed.times(time) );
+  if (this.position.x < player.position.x - 2) {
+    newSpeed = newSpeed.plus( new Vector(bigSpeed, 0) );
   }
-  else if (this.position.x > player.position.x) {
-    this.speed = new Vector(-bigSpeed.x, 0);
-    newPosition = newPosition.plus( this.speed.times(time) );
+  if (this.position.x > player.position.x + 2) {
+    newSpeed = newSpeed.plus( new Vector(-bigSpeed, 0) );
   }
+
+  if (this.position.y > 5) {
+    newSpeed = newSpeed.plus( new Vector(0, -bigSpeed) );
+  }
+  else if (this.position.y < 0) {
+    newSpeed = newSpeed.plus( new Vector(0, bigSpeed) );
+  }
+
+  newPosition = newPosition.plus( newSpeed.times(time) );
 
   this.chargingBlust(time, gameState);
   this.fireBlust(time, gameState);
@@ -251,11 +259,11 @@ BigEnemy.prototype.update = function(time, gameState){
     drawArgs.y = newPosition.y;
     drawArgs.sx = drawArgs.sx === 0 ? 32 : 0;
 
-    return new BigEnemy(newPosition, this.speed, drawArgs, "big enemy",mediumShipDamage ,
+    return new BigEnemy(newPosition, newSpeed, drawArgs, "big enemy",mediumShipDamage ,
                            this.hp ,0 , this.weapon);
 
   }
-  else {
+  else {array[i]
     var actors = gameState.actors;
     actors[actors.indexOf(this)] = null;
   }

@@ -54,10 +54,15 @@ GameState.prototype.update = function(time){
   }
 
   updateCollisions(updatedActors);
-
   generateBackground(updatedActors);
   generateMeteors(updatedActors);
 
+  if( Number.isInteger(timeSum/1.28) )
+    generateLevel(level1, updatedActors);
+
   newState.actors = updatedActors;
+  timeSum += time;
+  timeSum  = Number( timeSum.toFixed(2) );
+
   return newState;
 }
