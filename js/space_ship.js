@@ -61,11 +61,16 @@ SpaceShip.prototype.fireGun = function(time, gameState, speed){
     gameState.actors.push( this.createLaserBolt(speed) );
   }
 
-  if(weapon.timeBeforeReady > 0){
-    weapon.timeBeforeReady -= time;
+
+}
+
+SpaceShip.prototype.chargeWeapon = function(time){
+
+  if(this.weapon.timeBeforeReady > 0){
+    this.weapon.timeBeforeReady -= time;
   }else {
-    weapon.isReady = true;
-    weapon.timeBeforeReady = 0;
+    this.weapon.isReady = true;
+    this.weapon.timeBeforeReady = 0;
   }
 
 }

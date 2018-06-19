@@ -89,7 +89,7 @@ DOM.modifyBar = function(type,from ,to ,action){
   }
 
   const children = container.children;
-  
+
   for (var i = from; i < to; i++) {
     children[i].style.opacity = action === "lose" ? "0" : "1";
   }
@@ -188,6 +188,18 @@ function cleanArray(array){
   return array.filter(function(element){
     return element !== undefined && element !== null;
   });
+}
+
+/******************************************************************************/
+
+function elementIncludes(array, str){
+
+  for (var i = 0; i < array.length; i++) {
+    if ( array[i].includes(str) )
+      return array[i];
+  }
+
+  return false;
 }
 
 /******************************************************************************/

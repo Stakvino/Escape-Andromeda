@@ -41,6 +41,10 @@ class SmallEnemy extends SpaceShip{
       laserSpeed      : laserSpeed
     }
 
+    const drawArgs = copyObject(smallDrawArgs);
+    drawArgs.x = positionX;
+    drawArgs.y = -50;
+
     return new SmallEnemy( new Vector(positionX, -50), smallSpeed, smallDrawArgs,
                            "small enemy",smallShipDamage, smallHp, 0, weapon );
 
@@ -52,25 +56,25 @@ class SmallEnemy extends SpaceShip{
 
 SmallEnemy.prototype.update = function(time, gameState){
 
-  const playerPosition = gameState.getPlayer().position;
-
-  const angle = angleBetween(this.position, playerPosition);
-  const speed = getVectorCord( vectorMagnitude(this.speed), angle);
-  const laserSpeed = getVectorCord( this.weapon.laserSpeed, angle);
+  const player = gameState.getPlayer();
 
   if (this.takingDamage > 0){
     this.takingDamage -= time > this.takingDamage ? this.takingDamage : time;
   }
 
-  if(this.hp === 0){
+  if(this.hp === 0 || player === undefined){
     return this;
   }
 
+  const angle = angleBetween(this.position, player.position);
+  const speed = getVectorCord( vectorMagnitude(this.speed), angle);
+  const laserSpeed = getVectorCord( this.weapon.laserSpeed, angle);
 
   this.fireGun(time, gameState,  laserSpeed );
+  this.chargeWeapon(time);
 
   var newPosition = this.position;
-  if (vectorMagnitude(playerPosition.plus(this.position.times(-1) ) ) > 200 ) {
+  if (vectorMagnitude(player.position.plus(this.position.times(-1) ) ) > 200 ) {
     newPosition = this.position.plus( speed.times(time) );
   }
 
@@ -126,7 +130,11 @@ class MediumEnemy extends SpaceShip{
       laserSpeed      : laserSpeed
     }
 
-    return new MediumEnemy( new Vector(positionX, -50), mediumSpeed, mediumDrawArgs,
+    const drawArgs = copyObject(mediumDrawArgs);
+    drawArgs.x = positionX;
+    drawArgs.y = -50;
+
+    return new MediumEnemy( new Vector(positionX, -50), mediumSpeed, drawArgs,
                             "medium enemy",mediumShipDamage, mediumHp, 0, weapon);
 
   }
@@ -141,15 +149,18 @@ MediumEnemy.prototype.update = function(time, gameState){
     this.takingDamage -= time > this.takingDamage ? this.takingDamage : time;
   }
 
-  if(this.hp === 0){
+  const player = gameState.getPlayer();
+
+  if(this.hp === 0 || player === undefined){
     return this;
   }
 
-  if (gameState.getPlayer().position.y < this.position.y) {
+  if (player.position.y < this.position.y) {
     this.fireGun(time, gameState,  new Vector(0, -this.weapon.laserSpeed) );
   }else {
     this.fireGun(time, gameState,  new Vector(0, this.weapon.laserSpeed) );
   }
+  this.chargeWeapon(time);
 
   if (this.position.x <= 5 || this.position.x >= canvasWidth - this.drawArgs.width) {
     this.speed = new Vector(-this.speed.x, this.speed.y);
@@ -208,7 +219,11 @@ class BigEnemy extends SpaceShip{
       laserSpeed      : laserSpeed
     }
 
-    return new BigEnemy( new Vector(positionX, -150), new Vector(0, 0), bigDrawArgs,
+    const drawArgs = copyObject(bigDrawArgs);
+    drawArgs.x = positionX;
+    drawArgs.y = -150;
+
+    return new BigEnemy( new Vector(positionX, -150), new Vector(0, 0), drawArgs,
                          "big enemy",bigShipDamage, bigHp, 0, weapon );
 
   }
@@ -224,15 +239,16 @@ BigEnemy.prototype.update = function(time, gameState){
     this.takingDamage -= time > this.takingDamage ? this.takingDamage : time;
   }
 
-  if(this.hp === 0){
+  const player = gameState.getPlayer();
+
+  if(this.hp === 0 || player === undefined){
     return this;
   }
 
-  const player = gameState.getPlayer();
   var newPosition = this.position;
   var newSpeed    = new Vector(0, 0);
 
-  //flow player
+  //folow player
   if (this.position.x < player.position.x - 2) {
     newSpeed = newSpeed.plus( new Vector(bigSpeed, 0) );
   }
@@ -285,7 +301,13 @@ BigEnemy.prototype.chargingBlust = function(time, gameState){
   drawArgs.width  += 20;
   drawArgs.height += 20;
   //draw yellow and red bolt to make charging laser naimation
-  const redOrYellowBolt = getRandomElement( ["red bolt", "yellow bolt"] );
+  var redOrYellowBolt = null;
+  if (this.weapon.charingTime < 0.8) {
+    redOrYellowBolt = getRandomElement( ["red bolt", "yellow bolt"] );
+  }else {
+    redOrYellowBolt = "red bolt";
+  }
+
   const chargingBlast = new MovingObject(position, new Vector(0, 0), drawArgs, "charging blast", 0, 1);
   drawArgs.sx = chargingBlast.getSpriteX(laserTypes[redOrYellowBolt].spriteIndex.x)*2 + 5 ;
   drawArgs.sy = chargingBlast.getSpriteY(laserTypes[redOrYellowBolt].spriteIndex.y);

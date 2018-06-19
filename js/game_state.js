@@ -38,6 +38,7 @@ function getAllActorsExept(actors, ...types){
 }
 
 /******************************************************************************/
+var levelNumber = 0;
 
 GameState.prototype.update = function(time){
 
@@ -55,14 +56,25 @@ GameState.prototype.update = function(time){
 
   updateCollisions(updatedActors);
   generateBackground(updatedActors);
-  generateMeteors(updatedActors);
 
-  if( Number.isInteger(timeSum/1.28) )
-    generateLevel(level1, updatedActors);
-
-  newState.actors = updatedActors;
   timeSum += time;
   timeSum  = Number( timeSum.toFixed(2) );
 
+  if (levelNumber === -1 || waveNumber === levels[levelNumber].length) {
+    waveNumber = -1;
+    levelNumber++;
+    console.log(levelNumber);
+  }
+  if( Number.isInteger(timeSum/4) ){
+    generateLevel(levels[levelNumber], updatedActors);
+  }
+
+  if ( levels[levelNumber][waveNumber].includes("RM") ) {
+    const element = elementIncludes(levels[levelNumber][waveNumber], "RM");
+    generateRandomMeteors( updatedActors, parseInt(element) );
+  }
+
+
+  newState.actors = updatedActors;
   return newState;
 }

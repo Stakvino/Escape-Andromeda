@@ -1,13 +1,4 @@
 const player  = Player.create();
-const level1  = [
-  ["#","S","#","S","#","S","#"],
-  ["#","M","#","M","#","M","#"],
-  ["#","B","#","#","#","B","#"],
-  ["#","HR","#","SR","#","LR","#"]
-];
-
-/******************************************************************************/
-
 var gameState = new GameState("playing", [player]);
 const canvas  = new Canvas(document.querySelector("div.game-window"), gameState);
 

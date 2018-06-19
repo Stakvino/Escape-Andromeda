@@ -113,11 +113,11 @@ function generateBackground(actors){
 const smallMeteorImg = DOM.createImg("img/Meteors/Meteor1.png");
 const meteorSizes    = ["small", "medium", "big"];
 
-function generateMeteors(actors){
+function generateRandomMeteors(actors, prob){
 
-  const rand   = getRandomNumber(0, 400);
+  const rand   = getRandomNumber(0, 100);
 
-  if (rand < 397) {
+  if (rand > prob) {
     return ;
   }
 
@@ -220,9 +220,17 @@ var waveNumber = -1;
 
 function generateLevel(level, actors){
 
+  if(waveNumber >= level.length)
+    return ;
+
   if ( waveNumber === -1 || waveFinished(actors, level[waveNumber]) ) {
+
     waveNumber++;
-    generateWave(level[waveNumber], actors);
+    if(waveNumber >= level.length)
+      return ;
+    else
+      generateWave(level[waveNumber], actors);
+
   }
 
 }

@@ -68,16 +68,15 @@ function canMoveYAxis(newPosition, size){
 Player.prototype.tookRessource = function(ressourceType){
 
   if ( ressourceType === "health ressource" ) {
-    const newHp = this.hp + 1 > playerHp ? playerHp : this.hp + 1;
-    DOM.modifyBar("health",this.hp ,this.hp + 1 , "recover");
-    this.hp += 1;
+      DOM.modifyBar("health",0 ,playerHp , "recover");
+      this.hp = playerHp;
   }
   else if ( ressourceType === "shadow ressource" ) {
     //Recover full shadow
-    DOM.modifyBar("shadow",0 ,playerShadowForm.remaining/100, "recover");
-    this.shadowForm.remaining = playerShadowForm.remaining;
+      DOM.modifyBar("shadow",0 ,playerShadowForm.remaining/100, "recover");
+      this.shadowForm.remaining = playerShadowForm.remaining;
   }
-  else if ( ressourceType === "laser ressource" ) {
+  else if ( ressourceType === "laser speed ressource" ) {
     if (this.weapon.charingTime > 0.1) {
       DOM.addBar("laser speed", 1);
       this.weapon.charingTime -= 0.05;
@@ -106,8 +105,10 @@ Player.prototype.update = function(time, gameState){
     return this;
   }
 
-  if (gameKeys["ControlLeft"])
+  if (gameKeys["ControlLeft"]){
     this.fireGun(time, gameState, this.weapon.laserSpeed );
+  }
+  this.chargeWeapon(time);
 
   if (gameKeys["ArrowUp"]) {
     newSpeed.y = -playerNormalSpeed.y;
