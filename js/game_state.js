@@ -60,18 +60,22 @@ GameState.prototype.update = function(time){
   timeSum += time;
   timeSum  = Number( timeSum.toFixed(2) );
 
-  if (levelNumber === -1 || waveNumber === levels[levelNumber].length) {
-    waveNumber = -1;
-    levelNumber++;
-    console.log(levelNumber);
-  }
+  const wave = levels[levelNumber][waveNumber] || levels[levelNumber][0];
+  const lastElement = wave[ wave.length - 1 ];
+
   if( Number.isInteger(timeSum/4) ){
+
     generateLevel(levels[levelNumber], updatedActors);
+
+    if ( waveNumber === (levels[levelNumber].length ) &&  waveFinished(this.actors, wave) ) {
+      waveNumber = -1;
+      levelNumber++;
+    }
+
   }
 
-  if ( levels[levelNumber][waveNumber].includes("RM") ) {
-    const element = elementIncludes(levels[levelNumber][waveNumber], "RM");
-    generateRandomMeteors( updatedActors, parseInt(element) );
+  if ( lastElement.includes("RM") ) {
+    generateRandomMeteors( updatedActors, /\d+/.exec(lastElement)[0] );
   }
 
 

@@ -220,17 +220,10 @@ var waveNumber = -1;
 
 function generateLevel(level, actors){
 
-  if(waveNumber >= level.length)
-    return ;
-
   if ( waveNumber === -1 || waveFinished(actors, level[waveNumber]) ) {
-
     waveNumber++;
-    if(waveNumber >= level.length)
-      return ;
-    else
-      generateWave(level[waveNumber], actors);
-
+    if (waveNumber >= level.length) return ;
+    else generateWave(level[waveNumber], actors);
   }
 
 }
