@@ -271,8 +271,8 @@ BigEnemy.prototype.update = function(time, gameState){
   if ( !this.isOutOfScreen() ){
 
     const drawArgs = copyObject(this.drawArgs);
-    drawArgs.x = newPosition.x;
-    drawArgs.y = newPosition.y;
+    drawArgs.x = this.position.x
+    drawArgs.y = this.position.y;
     drawArgs.sx = drawArgs.sx === 0 ? 32 : 0;
 
     return new BigEnemy(newPosition, newSpeed, drawArgs, "big enemy",mediumShipDamage ,
@@ -332,7 +332,7 @@ BigEnemy.prototype.fireBlust = function(time, gameState){
   if(!this.weapon.isReady)
     return ;
 
-  const position = this.position.plus( new Vector(8, this.drawArgs.height - 2) );
+  const position = this.position.plus( new Vector(13, this.drawArgs.height - 2) );
 
   const redOrYellowImg = getRandomElement( [redBlastImg, yellowBlastImg] );
 

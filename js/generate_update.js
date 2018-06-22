@@ -110,7 +110,7 @@ function generateBackground(actors){
 
 /******************************************************************************/
 
-const smallMeteorImg = DOM.createImg("img/Meteors/Meteor1.png");
+const meteorImg      = DOM.createImg("img/Meteors/Meteor1.png");
 const meteorSizes    = ["small", "medium", "big"];
 
 function generateRandomMeteors(actors, prob){
@@ -122,7 +122,6 @@ function generateRandomMeteors(actors, prob){
   }
 
   const size   = getRandomElement( meteorSizes );
-  const meteorImg  = smallMeteorImg;
   const speed  = backgroundSpeed.plus( new Vector(0,200) );
 
   const damage = meteorSizes.indexOf(size) + 1;
@@ -130,7 +129,7 @@ function generateRandomMeteors(actors, prob){
   const hp     = meteorSizes.indexOf(size) + 2;
 
   const randomXposition = getRandomNumber(0, canvasWidth - meteorImg.width);
-  const position = new Vector(randomXposition, -meteorImg.height);
+  const position = new Vector(randomXposition, -meteorImg.height * zoom);
   const drawArgs = {
     img : meteorImg,
     sx  : 2,
@@ -148,6 +147,7 @@ function generateRandomMeteors(actors, prob){
 }
 
 /******************************************************************************/
+
 const ressourcesSprites  = DOM.createImg("img/Ships/power-up.png");
 const ressourcesDrawArgs = {
   img : ressourcesSprites,

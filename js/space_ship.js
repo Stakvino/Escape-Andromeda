@@ -1,7 +1,7 @@
 class SpaceShip extends MovingObject {
   constructor(position, speed, drawArgs, type, damage, hp, takingDamage, weapon) {
     super(position, speed, drawArgs, type, damage, hp, takingDamage, weapon);
-    this.weapon      = weapon;
+    this.weapon = weapon;
   }
 }
 
