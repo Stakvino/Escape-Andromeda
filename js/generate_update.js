@@ -1,7 +1,7 @@
 function updateCollisions(actors){
 
     const player     = getAllActorsWithTypes(actors, "player")[0];
-    const enemies    = getAllActorsExept(actors, "player", "background", "blue laser");
+    const enemies    = getAllActorsExept(actors, "player", "background", "blue laser", "black hole");
 
     //Update player collisions with enemies
     for (var i = 0; i < enemies.length; i++) {
@@ -31,6 +31,24 @@ function updateCollisions(actors){
         player.tookRessource(ressource.type);
         actors[actors.indexOf(ressource)] = null;
       }
+    }
+
+    const blackHole = getAllActorsWithTypes(gameState.actors, "black hole")[0];
+
+    if (blackHole) {
+      const center  = new Vector(blackHole.position.x + blackHole.drawArgs.width /2,
+                                         blackHole.position.y + blackHole.drawArgs.height/2 );
+
+      const position = center.plus( new Vector(-50, -50) );
+      const drawArgs = {
+        width  : 100,
+        height : 100
+      }
+
+      const blackHoleCenter = new MovingObject(position, 0, drawArgs, "", 3);
+      if (player && player.collideWith(blackHoleCenter) )
+        player.tookDamageFrom(blackHoleCenter);
+
     }
 }
 
@@ -209,8 +227,20 @@ function generateWave(waveArray, actors){
     else if (waveArray[i] === "LR") {
       actor = generateRessource("laser speed", positionX);
     }
+    else if ( waveArray[i].includes("BH") ) {
+      actor = BlackHole.create(positionX);
+    }
 
-    actors.push(actor);
+    if (actor) {
+
+      if (actor.type === "black hole") {
+        actors.unshift(actor);
+      } else {
+        actors.push(actor);
+      }
+
+    }
+
   }
 
 }

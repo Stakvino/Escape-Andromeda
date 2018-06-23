@@ -105,7 +105,7 @@ Player.prototype.update = function(time, gameState){
     return this;
   }
 
-  if (gameKeys["ControlLeft"]){
+  if (gameKeys["KeyA"]){
     this.fireGun(time, gameState, this.weapon.laserSpeed );
   }
   this.chargeWeapon(time);
@@ -139,7 +139,7 @@ Player.prototype.update = function(time, gameState){
     newSpeed.x = playerNormalSpeed.x;
   }
 
-  if (gameKeys["Space"]  && this.shadowForm.remaining >= 10) {
+  if (gameKeys["KeyS"]  && this.shadowForm.remaining >= 10) {
 
     if(!this.shadowForm.isActive ){
       this.shadowForm.isActive = true;
@@ -157,11 +157,21 @@ Player.prototype.update = function(time, gameState){
       this.shadowForm.isActive = false;
   }
 
-
   /*Stop right moving and left moving animation if both ArrowRight key and
     ArrowLeft key are not pressed*/
   if (!gameKeys["ArrowRight"] && !gameKeys["ArrowLeft"])
     newDrawArgs.sx = this.getSpriteX(2);
+
+
+  const blackHole = getAllActorsWithTypes(gameState.actors, "black hole")[0];
+  if (blackHole) {
+    const blackHoleCenter = new Vector(blackHole.position.x + blackHole.drawArgs.width /2,
+                                       blackHole.position.y + blackHole.drawArgs.height/2 );
+    const angle = angleBetween(this.position, blackHoleCenter);
+    const gravityVector = getVectorCord( blackHole.gravity, angle);
+    newSpeed = newSpeed.plus(gravityVector);
+  }
+
 
   var movedX = position.plus( new Vector(newSpeed.x * time, 0) );
   //Upgrade position only if player didnt reach end of game border
@@ -174,7 +184,7 @@ Player.prototype.update = function(time, gameState){
     position = movedY;
     newDrawArgs.y = position.y;
   }
-  //
+
   newDrawArgs.sy = this.drawArgs.sy === 0 ? 24 : 0;
 
   return new Player(position, newSpeed, newDrawArgs, this.type, this.damage,

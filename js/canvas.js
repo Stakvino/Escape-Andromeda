@@ -77,7 +77,9 @@ Canvas.prototype.drawActors = function(time){
         const angle =  angleBetween(new Vector(0,0), actors[i].speed) - Math.PI/2;
         this.drawWithRotation(actors[i], angle);
       }
-
+      else if (actors[i].type === "black hole") {
+        this.drawWithRotation(actors[i], timeSum );
+      }
       else{
         if(actors[i].type === "player" && actors[i].shadowForm.isActive){
           this.ctx.save();
@@ -98,7 +100,7 @@ Canvas.prototype.drawActors = function(time){
                               return actor;
                             }
                           });
-                          
+
   const explodingObjects = actors.filter(actor => actor.takingDamage > 0);
 
   for (var i = 0; i < explodingObjects.length; i++) {

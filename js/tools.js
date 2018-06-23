@@ -99,15 +99,16 @@ DOM.modifyBar = function(type,from ,to ,action){
 /******************************************************************************/
 
 //Keyboard keys handler
-const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","ControlLeft","Space"];
+const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","KeyA","KeyS"];
 
 function trackKeys(keysArray){
   const keys = Object.create(null);
 
   function callback(event){
+    console.log(event.code);
     if ( keysArray.includes(event.code) ) {
-      keys[event.code] = event.type === "keydown";
       event.preventDefault();
+      keys[event.code] = event.type === "keydown";
     }
   }
 
