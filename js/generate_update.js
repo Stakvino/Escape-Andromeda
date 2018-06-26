@@ -308,6 +308,10 @@ function waveToTypes(wave){
         return "laser speed ressource";
         break;
 
+      case "BH":
+        return "black hole";
+        break;
+
       default:
         return "space";
         break;

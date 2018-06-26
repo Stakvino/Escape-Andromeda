@@ -1,22 +1,28 @@
 const player  = Player.create();
 var gameState = new GameState("playing", [player]);
 const canvas  = new Canvas(document.querySelector("div.game-window"), gameState);
+beginGame();
+
+var pressStartScreen = true;
+var timeSum  = 0;
 
 /******************************************************************************/
-var timeSum = 0;
-setTimeout(function(){
 
-  renderState(playerHp, playerShadowForm.remaining/100, 1);
+function beginGame(){
+
+  renderState(1);
   runAnimation(function(timeStep){
     gameState = gameState.update(timeStep);
-    canvas.update(timeStep);
+    if (gameState.status !== "lost") {
+      canvas.update(timeStep);
+    }
   },60);
 
-},500);
+}
 
 /******************************************************************************/
 
-function renderState(hp, shadowForm, laserSpeed){
+function renderState(laserSpeed, hp = playerHp, shadowForm = playerShadowForm.remaining/100){
 
   DOM.removeChildren(healthContainer);
   DOM.removeChildren(shadowContainer);
@@ -27,3 +33,16 @@ function renderState(hp, shadowForm, laserSpeed){
   DOM.addBar("laser speed", laserSpeed);
 
 }
+
+/******************************************************************************/
+
+addEventListener("keydown",e => {
+
+  if(pressStartScreen && e.key === "Enter"){
+
+    setTimeout(() => {
+      pressStartScreen = false;
+    },5000);
+  }
+
+});

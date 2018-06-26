@@ -1,7 +1,7 @@
 const playerInitialPosition = new Vector(450,500);
 const playerNormalSpeed     = new Vector(500,400);
 
-const playerSprites = DOM.createImg("img/Ships/ship.png");
+const playerSprites = DOM.createImg("img/Ships/player.png");
 const playerWidth  = 16;
 const playerHeight = 24;
 const imgZoomX = 4;
@@ -27,6 +27,15 @@ const playerShadowForm = {
   remaining : 1000,
   isActive  : false
 }
+
+const playerWeapon = {
+  name    : "blue laser",
+  isReady : true,
+  timeBeforeReady : 0,
+  charingTime     : 0.25,
+  laserSpeed      : new Vector(0, -600)
+}
+
 /******************************************************************************/
 
 class Player extends SpaceShip{
@@ -37,18 +46,10 @@ class Player extends SpaceShip{
 
   static create(){
 
-    const weapon = {
-      name    : "blue laser",
-      isReady : true,
-      timeBeforeReady : 0,
-      charingTime     : 0.25,
-      laserSpeed      : new Vector(0, -600)
-    }
-
     const shadow = copyObject(playerShadowForm);
 
     return new Player(playerInitialPosition, playerNormalSpeed, playerDrawArgs,
-                      "player", playerShipDamage, playerHp, 0, weapon, shadow);
+                      "player", playerShipDamage, playerHp, 0, playerWeapon, shadow);
   }
 
 }
@@ -79,8 +80,8 @@ Player.prototype.tookRessource = function(ressourceType){
   else if ( ressourceType === "laser speed ressource" ) {
     if (this.weapon.charingTime > 0.1) {
       DOM.addBar("laser speed", 1);
-      this.weapon.charingTime -= 0.05;
-      this.weapon.charingTime = this.weapon.charingTime.toFixed(2);
+      playerWeapon.charingTime -= 0.05;
+      playerWeapon.charingTime = this.weapon.charingTime.toFixed(2);
     }
   }
 

@@ -22,7 +22,7 @@ const smallDrawArgs = {
 }
 
 const smallShipDamage = 1;
-const smallHp = 1;
+const smallHp = 2;
 const smallSpeed = new Vector(250, 250);
 /******************************************************************************/
 
@@ -62,7 +62,7 @@ SmallEnemy.prototype.update = function(time, gameState){
     this.takingDamage -= time > this.takingDamage ? this.takingDamage : time;
   }
 
-  if(this.hp === 0 || player === undefined){
+  if(this.hp === 0 || !player){
     return this;
   }
 
@@ -151,7 +151,7 @@ MediumEnemy.prototype.update = function(time, gameState){
 
   const player = gameState.getPlayer();
 
-  if(this.hp === 0 || player === undefined){
+  if(this.hp === 0 || !player){
     return this;
   }
 
@@ -241,7 +241,7 @@ BigEnemy.prototype.update = function(time, gameState){
 
   const player = gameState.getPlayer();
 
-  if(this.hp === 0 || player === undefined){
+  if(this.hp === 0 || !player){
     return this;
   }
 

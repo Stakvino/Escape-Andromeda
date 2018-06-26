@@ -39,6 +39,7 @@ function getAllActorsExept(actors, ...types){
 
 /******************************************************************************/
 var levelNumber = 0;
+var endingTime  = 0;
 
 GameState.prototype.update = function(time){
 
@@ -63,11 +64,11 @@ GameState.prototype.update = function(time){
   const wave = levels[levelNumber][waveNumber] || levels[levelNumber][0];
   const lastElement = wave[ wave.length - 1 ];
 
-  if( Number.isInteger(timeSum/4) ){
+  if( Number.isInteger(timeSum/4) && endingTime === 0 && !pressStartScreen){
 
     generateLevel(levels[levelNumber], updatedActors);
 
-    if ( waveNumber === (levels[levelNumber].length ) &&  waveFinished(this.actors, wave) ) {
+    if ( waveNumber === ( levels[levelNumber].length ) &&  waveFinished(this.actors, wave) ) {
       waveNumber = -1;
       levelNumber++;
     }
@@ -80,5 +81,26 @@ GameState.prototype.update = function(time){
 
 
   newState.actors = updatedActors;
+
+  const player = this.getPlayer();
+
+  if(!player){
+    newState.status = "lost";
+    endingTime+=time;
+    if (this.actors.length) {
+      this.actors = [];
+    }
+  }
+
+  if (endingTime >= 3) {
+    renderState(levelNumber + 1);
+    endingTime = 0;
+    waveNumber = -1;
+    const newPlayer = Player.create();
+    newState.actors.push(newPlayer);
+    newState.status = "playing";
+  }
+
+
   return newState;
 }

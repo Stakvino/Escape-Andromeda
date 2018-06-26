@@ -17,6 +17,26 @@ class Vector {
 
 /******************************************************************************/
 
+function angleBetween(point1, point2){
+  const dy = point2.y - point1.y;
+  const dx = point2.x - point1.x;
+
+  return Math.atan2(dy,dx);
+}
+
+/******************************************************************************/
+
+function getVectorCord(magnitude, angle){
+  return new Vector(Math.cos(angle) * magnitude, Math.sin(angle) * magnitude);
+}
+
+/******************************************************************************/
+
+function vectorMagnitude(vector){
+  return Math.sqrt( Math.pow(vector.x, 2) +  Math.pow(vector.y, 2) );
+}
+
+/******************************************************************************/
 //Helpers for DOM manipulation
 const DOM = Object.create(null);
 
@@ -98,6 +118,11 @@ DOM.modifyBar = function(type,from ,to ,action){
 
 /******************************************************************************/
 
+DOM.flashElement = function(elment, delay){
+
+}
+
+/******************************************************************************/
 //Keyboard keys handler
 const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","KeyA","KeyS"];
 
@@ -105,8 +130,7 @@ function trackKeys(keysArray){
   const keys = Object.create(null);
 
   function callback(event){
-    console.log(event.code);
-    if ( keysArray.includes(event.code) ) {
+    if ( keysArray.includes(event.code) && !pressStartScreen) {
       event.preventDefault();
       keys[event.code] = event.type === "keydown";
     }
@@ -119,7 +143,6 @@ function trackKeys(keysArray){
 }
 
 const gameKeys = trackKeys(keysArray);
-
 /******************************************************************************/
 
 //Function to control FPS and stop resume callback function in requestAnimationFrame
@@ -179,6 +202,8 @@ function getRandomNumber(first, last, isDecimal = false){
   return Math.floor( Math.random() * (last - first + 1) ) + first;
 }
 
+/******************************************************************************/
+
 function getRandomElement(array){
   return array[ Math.floor( Math.random() * array.length ) ];
 }
@@ -201,25 +226,4 @@ function elementIncludes(array, str){
   }
 
   return false;
-}
-
-/******************************************************************************/
-
-function angleBetween(point1, point2){
-  const dy = point2.y - point1.y;
-  const dx = point2.x - point1.x;
-
-  return Math.atan2(dy,dx);
-}
-
-/******************************************************************************/
-
-function getVectorCord(magnitude, angle){
-  return new Vector(Math.cos(angle) * magnitude, Math.sin(angle) * magnitude);
-}
-
-/******************************************************************************/
-
-function vectorMagnitude(vector){
-  return Math.sqrt( Math.pow(vector.x, 2) +  Math.pow(vector.y, 2) );
 }
