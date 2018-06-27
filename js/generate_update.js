@@ -205,6 +205,24 @@ function generateRessource(type, positionX){
 
 function generateWave(waveArray, actors){
 
+  if (levelNumber === 0 && waveNumber === 5 && !tutorialIsDone) {
+    const tutorialMessage = `press <span class="important-message">"S"</span> to enter <span class="important-message">shadow form</span> <br>you will <span class="important-message">not take damage</span> while in shadow form`;
+    DOM.renderMessage(``, tutorialMessage, 8000);
+  }
+  if (levelNumber === 0 && waveNumber === 8 && !tutorialIsDone) {
+    const tutorialMessage = `<span class="important-message">red ressource</span> will restore your <span class="important-message">health</span>`;
+    DOM.renderMessage(``, tutorialMessage, 4000);
+  }
+  if (levelNumber === 0 && waveNumber === 10 && !tutorialIsDone) {
+    const tutorialMessage = `<span class="important-message">yellow ressources</span> will restore your <span class="important-message">shadow form</span>`;
+    DOM.renderMessage(``, tutorialMessage, 4000);
+  }
+  if (levelNumber === 0 && waveNumber === 12 && !tutorialIsDone) {
+    const tutorialMessage = `<span class="important-message">blue ressources</span> will make you weapon <span class="important-message">fire rfaster</span>`;
+    DOM.renderMessage(``, tutorialMessage, 4000);
+    tutorialIsDone = true;
+  }
+
   for (var i = 0; i < waveArray.length; i++) {
     const positionX = (i + 1) * ( canvasWidth / (waveArray.length + 1) );
     var actor = null;
@@ -232,13 +250,11 @@ function generateWave(waveArray, actors){
     }
 
     if (actor) {
-
       if (actor.type === "black hole") {
         actors.unshift(actor);
       } else {
         actors.push(actor);
       }
-
     }
 
   }
@@ -246,11 +262,11 @@ function generateWave(waveArray, actors){
 }
 
 /******************************************************************************/
-var waveNumber = -1;
+var waveNumber = 0;
 
 function generateLevel(level, actors){
 
-  if ( waveNumber === -1 || waveFinished(actors, level[waveNumber]) ) {
+  if ( waveNumber === 0 || waveFinished(actors, level[waveNumber]) ) {
     waveNumber++;
     if (waveNumber >= level.length) return ;
     else generateWave(level[waveNumber], actors);

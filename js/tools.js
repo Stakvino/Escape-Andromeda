@@ -117,8 +117,19 @@ DOM.modifyBar = function(type,from ,to ,action){
 }
 
 /******************************************************************************/
+const screenTitle   = document.querySelector(".screen-title");
+const screenMessage = document.querySelector(".screen-message");
 
-DOM.flashElement = function(elment, delay){
+DOM.renderMessage = function(title, message, delay){
+
+  screenTitle.textContent   = title;
+  screenMessage.innerHTML   = message;
+  screenTitle.style.opacity   = "1";
+  screenMessage.style.opacity = "1";
+  setTimeout( () => {
+    screenTitle.style.opacity   = "0";
+    screenMessage.style.opacity = "0";
+  },delay);
 
 }
 

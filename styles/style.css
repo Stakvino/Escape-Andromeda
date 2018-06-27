@@ -20,21 +20,21 @@ div.game-window
 
 .screen-title
 {
-  height: 150px;
+  width: 100%;
   margin-top: 1em;
   font-family: "arcade font";
+  text-align: center;
   color: #0077cc;
   font-size: 3em;
   text-shadow: black 10px 10px 20px;
   transition: opacity 2s;
   position: absolute;
   top: 5%;
-  left: 7%;
 }
 
 @keyframes flashes {
   from { opacity : 1;   }
-  to   { opacity : 0.2; }
+  to   { opacity : 0; }
 }
 .slow-flashes
 {
@@ -53,16 +53,19 @@ div.game-window
 
 .screen-message
 {
-  height: 200px;
+  width: 100%;
   font-family: "arcade font";
+  text-align: center;
   color: white;
-  font-size: 2em;
+  font-size: 1.8em;
   transition: opacity 2s;
   position: absolute;
   top: 45%;
-  left: 33%;
 }
-
+.important-message
+{
+  color: #0077cc;
+}
 .ship-state
 {
   display: flex;

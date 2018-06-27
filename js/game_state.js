@@ -69,8 +69,9 @@ GameState.prototype.update = function(time){
     generateLevel(levels[levelNumber], updatedActors);
 
     if ( waveNumber === ( levels[levelNumber].length ) &&  waveFinished(this.actors, wave) ) {
-      waveNumber = -1;
+      waveNumber = 0;
       levelNumber++;
+      DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], 4000);
     }
 
   }
@@ -95,10 +96,11 @@ GameState.prototype.update = function(time){
   if (endingTime >= 3) {
     renderState(levelNumber + 1);
     endingTime = 0;
-    waveNumber = -1;
+    waveNumber = 0;
     const newPlayer = Player.create();
     newState.actors.push(newPlayer);
     newState.status = "playing";
+    DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], 4000);
   }
 
 
