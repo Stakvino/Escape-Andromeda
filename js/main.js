@@ -40,14 +40,14 @@ function renderState(laserSpeed, hp = playerHp, shadowForm = playerShadowForm.re
 addEventListener("keydown",e => {
 
   if(pressStartScreen && e.key === "Enter"){
+    pressStartScreen = false;
     removeTitleScreen();
     const delay = 4000;
-    setTimeout( () => DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], delay), delay);
+    setTimeout( () => DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], 5000), delay);
     setTimeout(() => {
-      pressStartScreen = false;
-      const tutorialMessage = `use arrow keys to move around <br> press <span class="important-message">"Q"</span> to fire laser`;
-      setTimeout( () => DOM.renderMessage(``, tutorialMessage, 8000), 4000);
-    },8000);
+      const tutorialMessage = `use <span class="important-message">arrow keys</span> to <span class="important-message">move</span> around <br> press <span class="important-message">"Q"</span> to <span class="important-message">fire</span> laser`;
+      setTimeout( () => DOM.renderMessage(``, tutorialMessage, delay*2), delay);
+    },delay*2);
   }
 
 });

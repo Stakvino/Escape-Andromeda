@@ -210,7 +210,7 @@ function generateWave(waveArray, actors){
     DOM.renderMessage(``, tutorialMessage, 8000);
   }
   if (levelNumber === 0 && waveNumber === 8 && !tutorialIsDone) {
-    const tutorialMessage = `<span class="important-message">red ressource</span> will restore your <span class="important-message">health</span>`;
+    const tutorialMessage = `<span class="important-message">red ressources</span> will restore your <span class="important-message">health</span>`;
     DOM.renderMessage(``, tutorialMessage, 4000);
   }
   if (levelNumber === 0 && waveNumber === 10 && !tutorialIsDone) {
@@ -218,7 +218,7 @@ function generateWave(waveArray, actors){
     DOM.renderMessage(``, tutorialMessage, 4000);
   }
   if (levelNumber === 0 && waveNumber === 12 && !tutorialIsDone) {
-    const tutorialMessage = `<span class="important-message">blue ressources</span> will make you weapon <span class="important-message">fire rfaster</span>`;
+    const tutorialMessage = `<span class="important-message">blue ressources</span> will make your weapon <span class="important-message">fire faster</span>`;
     DOM.renderMessage(``, tutorialMessage, 4000);
     tutorialIsDone = true;
   }

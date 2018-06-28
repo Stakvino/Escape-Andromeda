@@ -66,6 +66,11 @@ div.game-window
 {
   color: #0077cc;
 }
+.wasted
+{
+  color: red;
+  font-size: 2.5em;
+}
 .ship-state
 {
   display: flex;

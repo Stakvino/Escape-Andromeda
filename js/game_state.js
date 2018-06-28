@@ -71,7 +71,7 @@ GameState.prototype.update = function(time){
     if ( waveNumber === ( levels[levelNumber].length ) &&  waveFinished(this.actors, wave) ) {
       waveNumber = 0;
       levelNumber++;
-      DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], 4000);
+      DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], 5000);
     }
 
   }
@@ -88,8 +88,10 @@ GameState.prototype.update = function(time){
   if(!player){
     newState.status = "lost";
     endingTime+=time;
-    if (this.actors.length) {
+    const actors = getAllActorsExept(this.actors, "background");
+    if (this.actors && actors.length ) {
       this.actors = [];
+      DOM.renderMessage("",`<span class="wasted">wasted</span>`,3000);
     }
   }
 
