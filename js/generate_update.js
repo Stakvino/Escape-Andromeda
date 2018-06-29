@@ -205,19 +205,19 @@ function generateRessource(type, positionX){
 
 function generateWave(waveArray, actors){
 
-  if (levelNumber === 0 && waveNumber === 5 && !tutorialIsDone) {
+  if (levelNumber === 0 && waveNumber === 6 && !tutorialIsDone) {
     const tutorialMessage = `press <span class="important-message">"S"</span> to enter <span class="important-message">shadow form</span> <br>you will <span class="important-message">not take damage</span> while in shadow form`;
     DOM.renderMessage(``, tutorialMessage, 8000);
   }
-  if (levelNumber === 0 && waveNumber === 8 && !tutorialIsDone) {
-    const tutorialMessage = `<span class="important-message">red ressources</span> will restore your <span class="important-message">health</span>`;
+  if (levelNumber === 0 && waveNumber === 9 && !tutorialIsDone) {
+    const tutorialMessage = `<span class="important-message">red ressources</span> will restore your <span class="important-message">health</span> bar`;
     DOM.renderMessage(``, tutorialMessage, 4000);
   }
-  if (levelNumber === 0 && waveNumber === 10 && !tutorialIsDone) {
-    const tutorialMessage = `<span class="important-message">yellow ressources</span> will restore your <span class="important-message">shadow form</span>`;
+  if (levelNumber === 0 && waveNumber === 11 && !tutorialIsDone) {
+    const tutorialMessage = `<span class="important-message">yellow ressources</span> will restore your <span class="important-message">shadow form</span> bar`;
     DOM.renderMessage(``, tutorialMessage, 4000);
   }
-  if (levelNumber === 0 && waveNumber === 12 && !tutorialIsDone) {
+  if (levelNumber === 0 && waveNumber === 13 && !tutorialIsDone) {
     const tutorialMessage = `<span class="important-message">blue ressources</span> will make your weapon <span class="important-message">fire faster</span>`;
     DOM.renderMessage(``, tutorialMessage, 4000);
     tutorialIsDone = true;

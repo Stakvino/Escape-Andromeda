@@ -59,7 +59,9 @@ function removeTitleScreen(){
   screenMessage.classList.add("fast-flashes");
   setTimeout( () => {
     screenMessage.classList.remove("fast-flashes");
-    screenTitle.style.opacity   = "0";
-    screenMessage.style.opacity = "0";
+    setTimeout( () => {
+      screenTitle.style.opacity   = "0";
+      screenMessage.style.opacity = "0";
+    },500);
   },500 );
 }

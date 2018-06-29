@@ -87,11 +87,14 @@ GameState.prototype.update = function(time){
 
   if(!player){
     newState.status = "lost";
+
+    if(endingTime === 0)
+      DOM.renderMessage("",`<span class="wasted">wasted</span>`,2000);
+
     endingTime+=time;
     const actors = getAllActorsExept(this.actors, "background");
-    if (this.actors && actors.length ) {
+    if (this.actors.length ) {
       this.actors = [];
-      DOM.renderMessage("",`<span class="wasted">wasted</span>`,3000);
     }
   }
 

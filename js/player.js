@@ -145,11 +145,14 @@ Player.prototype.update = function(time, gameState){
     if(!this.shadowForm.isActive ){
       this.shadowForm.isActive = true;
     }
-    this.shadowForm.remaining -= 10;
-    if ( this.shadowForm.remaining % 100 === 0 ){
-      const from = this.shadowForm.remaining/100;
-      const to   = from + 1;
-      DOM.modifyBar("shadow",from ,to , "lose");
+
+    if ( tutorialIsDone ) {
+      this.shadowForm.remaining -= 10;
+      if ( this.shadowForm.remaining % 100 === 0 ){
+        const from = this.shadowForm.remaining/100;
+        const to   = from + 1;
+        DOM.modifyBar("shadow",from ,to , "lose");
+      }
     }
 
   }
@@ -157,7 +160,6 @@ Player.prototype.update = function(time, gameState){
     if(this.shadowForm.isActive)
       this.shadowForm.isActive = false;
   }
-
   /*Stop right moving and left moving animation if both ArrowRight key and
     ArrowLeft key are not pressed*/
   if (!gameKeys["ArrowRight"] && !gameKeys["ArrowLeft"])
