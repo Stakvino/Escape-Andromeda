@@ -11,7 +11,7 @@ function updateCollisions(actors){
     }
 
     const blueLasers = getAllActorsWithTypes(actors, "blue laser");
-    const killables  = getAllActorsWithTypes(actors, "small enemy", "medium enemy", "big enemy", "meteor");
+    const killables  = getAllActorsWithTypes(actors, "small enemy", "medium enemy", "big enemy", "meteor", "final boss");
 
     //Update player's lasers collisions with enemies
     for (var i = 0; i < killables.length; i++) {
@@ -247,6 +247,9 @@ function generateWave(waveArray, actors){
     }
     else if ( waveArray[i].includes("BH") ) {
       actor = BlackHole.create(positionX);
+    }
+    else if ( waveArray[i].includes("FB") ) {
+      actor = FinalBoss.create(positionX, new Vector(0, 0), 6, 600);
     }
 
     if (actor) {

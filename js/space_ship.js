@@ -29,7 +29,7 @@ const laserBoltDrawArgs = {
 
 /******************************************************************************/
 
-SpaceShip.prototype.createLaserBolt = function(speed){
+SpaceShip.prototype.createLaserBolt = function(speed, boltSize){
 
   const position = this.position.plus( new Vector(this.drawArgs.width/4, 0) );
   //fire from bottom of sprite if spaceship going to the bottom "vice v".
@@ -51,14 +51,14 @@ SpaceShip.prototype.createLaserBolt = function(speed){
 
 /******************************************************************************/
 
-SpaceShip.prototype.fireGun = function(time, gameState, speed){
+SpaceShip.prototype.fireGun = function(time, gameState, speed, boltSize = new Vector(30,50) ){
 
   const weapon = this.weapon;
 
   if (weapon.isReady){
     weapon.timeBeforeReady  = weapon.charingTime;
     weapon.isReady = false;
-    gameState.actors.push( this.createLaserBolt(speed) );
+    gameState.actors.push( this.createLaserBolt(speed, boltSize) );
   }
 
 

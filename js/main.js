@@ -1,6 +1,9 @@
 const player  = Player.create();
-var gameState = new GameState("playing", [player]);
+const finalBoss = FinalBoss.create(FBPosition, new Vector(0, 0), 6, 600);
+
+var gameState = new GameState("playing", [player,finalBoss]);
 const canvas  = new Canvas(document.querySelector("div.game-window"), gameState);
+
 setTimeout(() => beginGame(),200);
 
 var pressStartScreen = true;
@@ -32,7 +35,7 @@ function renderState(laserSpeed, hp = playerHp, shadowForm = playerShadowForm.re
   DOM.addBar("health", hp);
   DOM.addBar("shadow", shadowForm);
   DOM.addBar("laser speed", laserSpeed);
-
+  playerWeapon.charingTime = 0.25 - ( 0.5 * levelNumber );
 }
 
 /******************************************************************************/

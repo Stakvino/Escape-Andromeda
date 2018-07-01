@@ -1,4 +1,4 @@
-const playerInitialPosition = new Vector(450,500);
+const playerInitialPosition = new Vector(0,500);
 const playerNormalSpeed     = new Vector(500,400);
 
 const playerSprites = DOM.createImg("img/Ships/player.png");

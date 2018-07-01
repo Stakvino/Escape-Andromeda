@@ -9,7 +9,9 @@ class MovingObject {
     this.type     = type;
     this.damage   = damage;
     this.hp       = hp;
-    this.size = new Vector(this.drawArgs.width, this.drawArgs.height);
+    if (this.drawArgs !== undefined) {
+      this.size = new Vector(this.drawArgs.width, this.drawArgs.height);
+    }
     this.takingDamage = takingDamage;
   }
 

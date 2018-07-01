@@ -70,7 +70,7 @@ SmallEnemy.prototype.update = function(time, gameState){
   const speed = getVectorCord( vectorMagnitude(this.speed), angle);
   const laserSpeed = getVectorCord( this.weapon.laserSpeed, angle);
 
-  this.fireGun(time, gameState,  laserSpeed );
+  this.fireGun(time, gameState,  laserSpeed);
   this.chargeWeapon(time);
 
   var newPosition = this.position;
@@ -212,11 +212,12 @@ class BigEnemy extends SpaceShip{
   static create(positionX, speed, charingTime, laserSpeed){
 
     const weapon = {
-      name    : "yellow blast",
+      name    : "laser blast",
       isReady : false,
       timeBeforeReady : 0,
       charingTime     : charingTime,
-      laserSpeed      : laserSpeed
+      laserSpeed      : laserSpeed,
+      maxCharge       : 2
     }
 
     const drawArgs = copyObject(bigDrawArgs);
@@ -265,8 +266,9 @@ BigEnemy.prototype.update = function(time, gameState){
 
   newPosition = newPosition.plus( newSpeed.times(time) );
 
-  this.chargingBlust(time, gameState);
-  this.fireBlust(time, gameState);
+  this.chargingBlast(time, gameState);
+  const position = this.position.plus( new Vector(13, this.drawArgs.height - 2) );
+  this.fireBlast(time, gameState, position, this.weapon.maxCharge);
 
   if ( !this.isOutOfScreen() ){
 
@@ -288,10 +290,11 @@ BigEnemy.prototype.update = function(time, gameState){
 
 /******************************************************************************/
 
-BigEnemy.prototype.chargingBlust = function(time, gameState){
+BigEnemy.prototype.chargingBlast = function(time, gameState){
 
   if(this.weapon.isReady)
     return ;
+
 
   const position = this.position.plus( new Vector(this.drawArgs.width/3.8, this.drawArgs.height/1.4) );
 
@@ -327,12 +330,10 @@ BigEnemy.prototype.chargingBlust = function(time, gameState){
 const yellowBlastImg = DOM.createImg("img/Ships/yellow-blast.png");
 const redBlastImg    = DOM.createImg("img/Ships/red-blast.png");
 
-BigEnemy.prototype.fireBlust = function(time, gameState){
+BigEnemy.prototype.fireBlast = function(time, gameState, position, maxCharge, speed = new Vector(0, 0) ){
 
   if(!this.weapon.isReady)
     return ;
-
-  const position = this.position.plus( new Vector(13, this.drawArgs.height - 2) );
 
   const redOrYellowImg = getRandomElement( [redBlastImg, yellowBlastImg] );
 
@@ -345,16 +346,29 @@ BigEnemy.prototype.fireBlust = function(time, gameState){
   drawArgs.width  = 100;
   drawArgs.height = 600;
   //draw yellow and red bolt to make charging laser naimation
-  const laserBlast = new MovingObject(position, new Vector(0, 0), drawArgs, "laser blast", 3, 1);
+  const laserBlast = new MovingObject(position, speed, drawArgs, "laser blast", 3, 1);
 
   gameState.actors.push(laserBlast);
 
   this.weapon.charingTime += time;
 
-  if(this.weapon.charingTime >= 2){
-    this.weapon.charingTime = 2;
+  if(this.weapon.charingTime >= maxCharge){
+    this.weapon.charingTime = maxCharge;
     this.weapon.isReady = false;
   }
 
 
 }
+
+
+const redOrYellowImg = getRandomElement( [redBlastImg, yellowBlastImg] );
+
+const position = new Vector(400,50);
+const drawArgs = copyObject(laserBoltDrawArgs);
+drawArgs.img = redOrYellowImg;
+drawArgs.x = position.x;
+drawArgs.y = position.y;
+drawArgs.swidth  = 36;
+drawArgs.sheight = 47;
+drawArgs.width  = 100;
+drawArgs.height = 600;
