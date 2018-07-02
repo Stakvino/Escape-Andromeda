@@ -107,7 +107,8 @@ Player.prototype.update = function(time, gameState){
   }
 
   if (gameKeys["KeyA"]){
-    this.fireGun(time, gameState, this.weapon.laserSpeed );
+    const laserPosition = this.position.plus( new Vector(this.drawArgs.width/4, 0) );
+    this.fireGun(time, gameState, this.weapon.laserSpeed, laserPosition);
   }
   this.chargeWeapon(time);
 

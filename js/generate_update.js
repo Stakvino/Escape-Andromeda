@@ -19,7 +19,9 @@ function updateCollisions(actors){
       for (var j = 0; j < blueLasers.length; j++) {
         const blueLaser = blueLasers[j];
         if ( killable.collideWith(blueLaser) )
-          killable.tookDamageFrom(blueLaser);
+          if (killable.type !== "final boss" || FBPhasesLoop[phaseNumber] !== "shadow") {
+            killable.tookDamageFrom(blueLaser);
+          }
       }
     }
 
@@ -202,24 +204,25 @@ function generateRessource(type, positionX){
 }
 
 /******************************************************************************/
+const messageTimeDelay = 4000;
 
 function generateWave(waveArray, actors){
 
   if (levelNumber === 0 && waveNumber === 6 && !tutorialIsDone) {
     const tutorialMessage = `press <span class="important-message">"S"</span> to enter <span class="important-message">shadow form</span> <br>you will <span class="important-message">not take damage</span> while in shadow form`;
-    DOM.renderMessage(``, tutorialMessage, 8000);
+    DOM.renderMessage(``, tutorialMessage, messageTimeDelay*2);
   }
   if (levelNumber === 0 && waveNumber === 9 && !tutorialIsDone) {
     const tutorialMessage = `<span class="important-message">red ressources</span> will restore your <span class="important-message">health</span> bar`;
-    DOM.renderMessage(``, tutorialMessage, 4000);
+    DOM.renderMessage(``, tutorialMessage, messageTimeDelay);
   }
   if (levelNumber === 0 && waveNumber === 11 && !tutorialIsDone) {
     const tutorialMessage = `<span class="important-message">yellow ressources</span> will restore your <span class="important-message">shadow form</span> bar`;
-    DOM.renderMessage(``, tutorialMessage, 4000);
+    DOM.renderMessage(``, tutorialMessage, messageTimeDelay);
   }
   if (levelNumber === 0 && waveNumber === 13 && !tutorialIsDone) {
     const tutorialMessage = `<span class="important-message">blue ressources</span> will make your weapon <span class="important-message">fire faster</span>`;
-    DOM.renderMessage(``, tutorialMessage, 4000);
+    DOM.renderMessage(``, tutorialMessage, messageTimeDelay);
     tutorialIsDone = true;
   }
 
@@ -228,10 +231,10 @@ function generateWave(waveArray, actors){
     var actor = null;
 
     if (waveArray[i] === "S") {
-      actor = SmallEnemy.create(positionX, smallSpeed, 0.6, 600);
+      actor = SmallEnemy.create(positionX, smallSpeed, 0.6, 900);
     }
     else if (waveArray[i] === "M") {
-      actor = MediumEnemy.create(positionX, mediumSpeed, 0.6, 600);
+      actor = MediumEnemy.create(positionX, mediumSpeed, 0.5, 900);
     }
     else if (waveArray[i] === "B") {
       actor = BigEnemy.create(positionX, bigSpeed, 2, 600);
@@ -249,7 +252,7 @@ function generateWave(waveArray, actors){
       actor = BlackHole.create(positionX);
     }
     else if ( waveArray[i].includes("FB") ) {
-      actor = FinalBoss.create(positionX, new Vector(0, 0), 6, 600);
+      actor = FinalBoss.create(new Vector(900, 0), 6, 600);
     }
 
     if (actor) {

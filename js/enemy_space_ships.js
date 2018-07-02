@@ -70,14 +70,20 @@ SmallEnemy.prototype.update = function(time, gameState){
   const speed = getVectorCord( vectorMagnitude(this.speed), angle);
   const laserSpeed = getVectorCord( this.weapon.laserSpeed, angle);
 
-  this.fireGun(time, gameState,  laserSpeed);
-  this.chargeWeapon(time);
-
   var newPosition = this.position;
   if (vectorMagnitude(player.position.plus(this.position.times(-1) ) ) > 200 ) {
     newPosition = this.position.plus( speed.times(time) );
   }
 
+  var boltPosition = null;
+  const speedAngle = angleBetween(new Vector(0,0), this.speed);
+  if (speedAngle > 0 && speedAngle < Math.PI) {
+    boltPosition = this.position.plus( new Vector(this.drawArgs.width/4, -this.drawArgs.height/1.5) );
+  }else {
+    boltPosition = this.position.plus( new Vector(this.drawArgs.width/4, this.drawArgs.height/2) );
+  }
+  this.fireGun(time, gameState,  laserSpeed, boltPosition );
+  this.chargeWeapon(time);
 
   if ( !this.isOutOfScreen() ){
 
@@ -143,6 +149,14 @@ class MediumEnemy extends SpaceShip{
 
 /******************************************************************************/
 
+MediumEnemy.prototype.moveRightAndLeft = function(){
+  if (this.position.x <= 5 || this.position.x >= canvasWidth - this.drawArgs.width ) {
+    this.speed = new Vector(-this.speed.x, this.speed.y);
+  }
+}
+
+/******************************************************************************/
+
 MediumEnemy.prototype.update = function(time, gameState){
 
   if (this.takingDamage > 0){
@@ -155,21 +169,20 @@ MediumEnemy.prototype.update = function(time, gameState){
     return this;
   }
 
+  const boltPosition = this.position.plus( new Vector(this.drawArgs.width/2, this.drawArgs.height/2) );
   if (player.position.y < this.position.y) {
-    this.fireGun(time, gameState,  new Vector(0, -this.weapon.laserSpeed) );
+    this.fireGun(time, gameState,  new Vector(0, -this.weapon.laserSpeed), boltPosition);
   }else {
-    this.fireGun(time, gameState,  new Vector(0, this.weapon.laserSpeed) );
+    this.fireGun(time, gameState,  new Vector(0, this.weapon.laserSpeed), boltPosition);
   }
   this.chargeWeapon(time);
 
-  if (this.position.x <= 5 || this.position.x >= canvasWidth - this.drawArgs.width) {
-    this.speed = new Vector(-this.speed.x, this.speed.y);
-  }
-
+  this.moveRightAndLeft();
 
   newPosition = this.position.plus( this.speed.times(time) );
 
   if ( !this.isOutOfScreen() ){
+
     const drawArgs = copyObject(this.drawArgs);
     drawArgs.x = newPosition.x;
     drawArgs.y = newPosition.y;
@@ -177,6 +190,7 @@ MediumEnemy.prototype.update = function(time, gameState){
 
     return new MediumEnemy(newPosition, this.speed, drawArgs, "medium enemy",mediumShipDamage ,
                            this.hp ,0 , this.weapon);
+
   }
   else {
     var actors = gameState.actors;
@@ -233,6 +247,22 @@ class BigEnemy extends SpaceShip{
 
 /******************************************************************************/
 
+BigEnemy.prototype.followPlayer = function(player, speed){
+
+  var newSpeed = new Vector(0, 0);
+
+  if (this.position.x < player.position.x - 2) {
+    newSpeed = newSpeed.plus( new Vector(speed, 0) );
+  }
+  if (this.position.x > player.position.x + 2) {
+    newSpeed = newSpeed.plus( new Vector(-speed, 0) );
+  }
+
+  return newSpeed;
+}
+
+/******************************************************************************/
+
 BigEnemy.prototype.update = function(time, gameState){
 
 
@@ -247,15 +277,7 @@ BigEnemy.prototype.update = function(time, gameState){
   }
 
   var newPosition = this.position;
-  var newSpeed    = new Vector(0, 0);
-
-  //folow player
-  if (this.position.x < player.position.x - 2) {
-    newSpeed = newSpeed.plus( new Vector(bigSpeed, 0) );
-  }
-  if (this.position.x > player.position.x + 2) {
-    newSpeed = newSpeed.plus( new Vector(-bigSpeed, 0) );
-  }
+  var newSpeed    = this.followPlayer(player, bigSpeed);
 
   if (this.position.y > 5) {
     newSpeed = newSpeed.plus( new Vector(0, -bigSpeed) );
@@ -266,9 +288,10 @@ BigEnemy.prototype.update = function(time, gameState){
 
   newPosition = newPosition.plus( newSpeed.times(time) );
 
-  this.chargingBlast(time, gameState);
-  const position = this.position.plus( new Vector(13, this.drawArgs.height - 2) );
-  this.fireBlast(time, gameState, position, this.weapon.maxCharge);
+  const chargingPosition = newPosition.plus( new Vector(this.drawArgs.width/3.8, this.drawArgs.height/1.4) );
+  this.chargingBlast(time, gameState, chargingPosition);
+  const firePosition = newPosition.plus( new Vector(15, this.drawArgs.height - 2) );
+  this.fireBlast(time, gameState, firePosition, this.weapon.maxCharge);
 
   if ( !this.isOutOfScreen() ){
 
@@ -281,7 +304,7 @@ BigEnemy.prototype.update = function(time, gameState){
                            this.hp ,0 , this.weapon);
 
   }
-  else {array[i]
+  else {
     var actors = gameState.actors;
     actors[actors.indexOf(this)] = null;
   }
@@ -290,13 +313,10 @@ BigEnemy.prototype.update = function(time, gameState){
 
 /******************************************************************************/
 
-BigEnemy.prototype.chargingBlast = function(time, gameState){
+BigEnemy.prototype.chargingBlast = function(time, gameState, position){
 
   if(this.weapon.isReady)
     return ;
-
-
-  const position = this.position.plus( new Vector(this.drawArgs.width/3.8, this.drawArgs.height/1.4) );
 
   const drawArgs = copyObject(laserBoltDrawArgs);
   drawArgs.x = position.x;
@@ -344,9 +364,9 @@ BigEnemy.prototype.fireBlast = function(time, gameState, position, maxCharge, sp
   drawArgs.swidth  = 36;
   drawArgs.sheight = 47;
   drawArgs.width  = 100;
-  drawArgs.height = 600;
+  drawArgs.height = 900;
   //draw yellow and red bolt to make charging laser naimation
-  const laserBlast = new MovingObject(position, speed, drawArgs, "laser blast", 3, 1);
+  const laserBlast = new MovingObject(position, speed, drawArgs, "laser blast" + this.type, 3, 1);
 
   gameState.actors.push(laserBlast);
 
@@ -360,7 +380,7 @@ BigEnemy.prototype.fireBlast = function(time, gameState, position, maxCharge, sp
 
 }
 
-
+/*
 const redOrYellowImg = getRandomElement( [redBlastImg, yellowBlastImg] );
 
 const position = new Vector(400,50);
@@ -372,3 +392,4 @@ drawArgs.swidth  = 36;
 drawArgs.sheight = 47;
 drawArgs.width  = 100;
 drawArgs.height = 600;
+*/

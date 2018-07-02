@@ -49,7 +49,7 @@ Canvas.prototype.drawActor = function (actor, transform){
 
   const drawArgs = copyObject(actor.drawArgs);
 
-    if (transform !== undefined) {
+    if (transform !== null) {
 
       this.ctx.save();
 
@@ -57,17 +57,18 @@ Canvas.prototype.drawActor = function (actor, transform){
         this.ctx.scale(-1, 1);
       }
 
-      this.ctx.globalAlpha = transform.alpha || 0;
+      this.ctx.globalAlpha = transform.alpha || 1;
 
-      if (transform.angle !== undefined) {
+      if (transform.rotation !== null) {
 
-        drawArgs.x = -actor.drawArgs.width/2;
-        drawArgs.y = -actor.drawArgs.height/2;
+        const center = transform.rotation.center;
+        drawArgs.x = -center.x;
+        drawArgs.y = -center.y;
 
         this.ctx.translate(actor.position.x,actor.position.y);
-        this.ctx.translate(actor.drawArgs.width/2,actor.drawArgs.height/2);
+        this.ctx.translate(center.x,center.y);
 
-        this.ctx.rotate(transform.angle);
+        this.ctx.rotate(transform.rotation.angle);
       }
 
     }
@@ -88,32 +89,41 @@ Canvas.prototype.drawActors = function(time){
 
     if(actor.type === "background" || actor.hp > 0){
 
-      if(actor.type === "small enemy" || actor.type === "laser blast"){
-        const angle =  angleBetween(new Vector(0,0), actor.speed) - Math.PI/2;
-        this.drawActor(actor, {angle : angle} );
-        //if(actor.type === "laser blast") console.log(1);
+      const transorm = {
+          rotation : {angle : 0, center : new Vector(0, 0) },
+          alpha    : 1,
+          flip     : false
+        };
+
+      if(actor.type === "small enemy" ){
+        transorm.rotation.angle  =  angleBetween(new Vector(0,0), actor.speed) - Math.PI/2;
+        transorm.rotation.center =  new Vector(actor.drawArgs.width/2, actor.drawArgs.height/2);
+      }
+      else if (actor.type.includes("laser blast") ) {
+        if (actor.type.includes("final boss") ) {
+          actor.drawArgs.width = 150;
+        }
       }
       else if (actor.type === "black hole") {
-        this.drawActor(actor, {angle : timeSum} );
+        transorm.rotation.angle = timeSum;
       }
       else if (actor.type === "final boss") {
         const phaseName = FBPhasesLoop[phaseNumber];
-        const alpha     = phaseName === "shadow" ? 0.2 : 1;
-        this.drawActor(actor, {angle : actor.angle, alpha : alpha} );
+        transorm.alpha = phaseName === "shadow" ? 0.2 : 1;
+        transorm.rotation.angle = actor.angle;
+        transorm.rotation.center =  new Vector(actor.drawArgs.width/2, actor.drawArgs.height/2);
       }
       else if (actor.type === "player" && actor.shadowForm.isActive) {
-        this.drawActor( actor, {alpha : 0.2} );
-      }
-      else {
-        this.drawActor(actor);
+        transorm.alpha = 0.2;
       }
 
+      this.drawActor(actor, transorm);
     }
   }
 
 
   this.gameState.actors = this.gameState.actors.map(actor => {
-                            if (actor && (actor.type === "charging blast" || actor.type === "laser blast") ) {
+                            if (actor && (actor.type === "charging blast" || actor.type.includes("laser blast") ) ) {
                               return null;
                             } else {
                               return actor;
