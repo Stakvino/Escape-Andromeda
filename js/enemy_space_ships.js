@@ -364,7 +364,7 @@ BigEnemy.prototype.fireBlast = function(time, gameState, position, maxCharge, sp
   drawArgs.swidth  = 36;
   drawArgs.sheight = 47;
   drawArgs.width  = 100;
-  drawArgs.height = 900;
+  drawArgs.height = 600;
   //draw yellow and red bolt to make charging laser naimation
   const laserBlast = new MovingObject(position, speed, drawArgs, "laser blast" + this.type, 3, 1);
 

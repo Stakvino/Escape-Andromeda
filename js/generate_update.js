@@ -252,15 +252,11 @@ function generateWave(waveArray, actors){
       actor = BlackHole.create(positionX);
     }
     else if ( waveArray[i].includes("FB") ) {
-      actor = FinalBoss.create(new Vector(900, 0), 6, 600);
+      actor = FinalBoss.create(new Vector(900, 0), 0.5, 900);
     }
 
     if (actor) {
-      if (actor.type === "black hole") {
-        actors.unshift(actor);
-      } else {
-        actors.push(actor);
-      }
+      actors.push(actor);
     }
 
   }
@@ -289,8 +285,9 @@ function waveFinished(actors, wave){
   const actorTypes = waveToTypes(wave);
   const remaining  = actors.filter(function(actor){
                       for (var i = 0; i < actorTypes.length; i++) {
-                        if(actorTypes[i] === actor.type)
+                        if(actorTypes[i] === actor.type){
                           return true;
+                        }
                       }
                       return false;
                     });

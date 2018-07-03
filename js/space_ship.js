@@ -37,6 +37,8 @@ SpaceShip.prototype.createLaserBolt = function(speed, boltSize, position){
   const drawArgs = copyObject(laserBoltDrawArgs);
   drawArgs.x = position.x;
   drawArgs.y = position.y;
+  drawArgs.width  = boltSize.x;
+  drawArgs.height = boltSize.y;
   var damage = 0;
 
   damage = laserTypes[this.weapon.name].damage;
@@ -67,7 +69,7 @@ SpaceShip.prototype.chargeWeapon = function(time){
 
   if(this.weapon.timeBeforeReady > 0){
     this.weapon.timeBeforeReady -= time;
-  }else {  
+  }else {
     this.weapon.isReady = true;
     this.weapon.timeBeforeReady = 0;
   }

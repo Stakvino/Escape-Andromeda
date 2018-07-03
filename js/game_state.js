@@ -45,14 +45,16 @@ GameState.prototype.update = function(time){
 
   var newState = this;
   this.actors = cleanArray(this.actors);
-  var updatedActors = [];
+  var updatedActors  = [];
 
   this.actors = this.actors.filter(actor => {
     return actor.type === "background" || actor.hp > 0 || actor.takingDamage > 0;
   });
 
   for (var i = 0; i < this.actors.length; i++) {
-    updatedActors.push( this.actors[i].update(time, this) );
+    if (!updatedActors.includes(this.actors[i]) ) {
+      updatedActors.push( this.actors[i].update(time, this) );
+    }
   }
 
   updateCollisions(updatedActors);
@@ -68,7 +70,7 @@ GameState.prototype.update = function(time){
 
     generateLevel(levels[levelNumber], updatedActors);
 
-    if ( waveNumber === ( levels[levelNumber].length ) &&  waveFinished(this.actors, wave) ) {
+    if ( waveNumber === ( levels[levelNumber].length ) &&  waveFinished(actors, wave) ) {
       waveNumber = 0;
       levelNumber++;
       DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], 5000);
@@ -82,7 +84,6 @@ GameState.prototype.update = function(time){
 
 
   newState.actors = updatedActors;
-
   const player = this.getPlayer();
 
   if(!player){
@@ -92,7 +93,7 @@ GameState.prototype.update = function(time){
       DOM.renderMessage("",`<span class="wasted">wasted</span>`,2000);
 
     endingTime+=time;
-    const actors = getAllActorsExept(this.actors, "background");
+    const remainingActors = getAllActorsExept(this.actors, "background");
     if (this.actors.length ) {
       this.actors = [];
     }

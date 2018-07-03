@@ -1,5 +1,5 @@
 const player  = Player.create();
-const finalBoss = FinalBoss.create(new Vector(900, 0), 6, 600);
+const finalBoss = FinalBoss.create(new Vector(900, 0), 0.5, 900);
 
 var gameState = new GameState("playing", [player,finalBoss]);
 const canvas  = new Canvas(document.querySelector("div.game-window"), gameState);

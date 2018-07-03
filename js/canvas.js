@@ -49,55 +49,58 @@ Canvas.prototype.drawActor = function (actor, transform){
 
   const drawArgs = copyObject(actor.drawArgs);
 
-    if (transform !== null) {
+  this.ctx.save();
 
-      this.ctx.save();
+  if (transform.flip) {
+    this.ctx.scale(-1, 1);
+  }
 
-      if (transform.flip) {
-        this.ctx.scale(-1, 1);
-      }
+  this.ctx.globalAlpha = transform.alpha || 1;
 
-      this.ctx.globalAlpha = transform.alpha || 1;
+  if (transform.rotation.angle) {
+    const center = transform.rotation.center;
+    drawArgs.x = -center.x;
+    drawArgs.y = -center.y;
 
-      if (transform.rotation !== null) {
+    this.ctx.translate(actor.position.x,actor.position.y);
+    this.ctx.translate(center.x,center.y);
 
-        const center = transform.rotation.center;
-        drawArgs.x = -center.x;
-        drawArgs.y = -center.y;
+    this.ctx.rotate(transform.rotation.angle);
+  }
 
-        this.ctx.translate(actor.position.x,actor.position.y);
-        this.ctx.translate(center.x,center.y);
+  this.ctx.drawImage( ...getDrawArgs(drawArgs) );
 
-        this.ctx.rotate(transform.rotation.angle);
-      }
-
-    }
-
-    this.ctx.drawImage( ...getDrawArgs(drawArgs) );
-
-    this.ctx.restore();
+  this.ctx.restore();
 }
 
 /******************************************************************************/
+const drawnFirst = ["black hole", "background"];
 
 Canvas.prototype.drawActors = function(time){
 
-  const actors = cleanArray(this.gameState.actors);
+  this.gameState.actors = cleanArray(this.gameState.actors);
+  var actors = [];
+
+  for (var i = 0; i < this.gameState.actors.length; i++) {
+    const actor = this.gameState.actors[i];
+    if ( drawnFirst.includes(actor.type) ) {
+      actors.unshift(actor);
+    }else {
+      actors.push(actor);
+    }
+  }
 
   for (var i = 0; i < actors.length; i++) {
     const actor = actors[i];
 
     if(actor.type === "background" || actor.hp > 0){
 
-      const transorm = {
-          rotation : {angle : 0, center : new Vector(0, 0) },
-          alpha    : 1,
-          flip     : false
-        };
+      var transform = Object.create(null);
+      transform.rotation = Object.create(null);
 
       if(actor.type === "small enemy" ){
-        transorm.rotation.angle  =  angleBetween(new Vector(0,0), actor.speed) - Math.PI/2;
-        transorm.rotation.center =  new Vector(actor.drawArgs.width/2, actor.drawArgs.height/2);
+        transform.rotation.angle  =  angleBetween(new Vector(0,0), actor.speed) - Math.PI/2;
+        transform.rotation.center =  new Vector(actor.drawArgs.width/2, actor.drawArgs.height/2);
       }
       else if (actor.type.includes("laser blast") ) {
         if (actor.type.includes("final boss") ) {
@@ -105,19 +108,22 @@ Canvas.prototype.drawActors = function(time){
         }
       }
       else if (actor.type === "black hole") {
-        transorm.rotation.angle = timeSum;
+        transform.rotation.angle = timeSum;
+        transform.rotation.center =  new Vector(actor.drawArgs.width/2, actor.drawArgs.height/2);
       }
       else if (actor.type === "final boss") {
         const phaseName = FBPhasesLoop[phaseNumber];
-        transorm.alpha = phaseName === "shadow" ? 0.2 : 1;
-        transorm.rotation.angle = actor.angle;
-        transorm.rotation.center =  new Vector(actor.drawArgs.width/2, actor.drawArgs.height/2);
+        transform.alpha = phaseName === "shadow" ? 0.2 : 1;
+        if (actor.angle > 0) {
+          transform.rotation.angle = actor.angle;
+          transform.rotation.center =  new Vector(actor.drawArgs.width/2, actor.drawArgs.height/2);
+        }
       }
       else if (actor.type === "player" && actor.shadowForm.isActive) {
-        transorm.alpha = 0.2;
+        transform.alpha = 0.2;
       }
 
-      this.drawActor(actor, transorm);
+      this.drawActor(actor, transform);
     }
   }
 

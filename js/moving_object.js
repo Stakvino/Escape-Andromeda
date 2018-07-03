@@ -59,6 +59,7 @@ MovingObject.prototype.collideWith = function(movingObject){
 /******************************************************************************/
 
 MovingObject.prototype.tookDamageFrom = function(movingObject){
+
   if(this.hp <= 0 || movingObject.hp <= 0 || ( this.shadowForm && this.shadowForm.isActive) )
     return;
   //if its the player who took damage wait a moment before he can take damage again
