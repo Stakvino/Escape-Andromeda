@@ -288,9 +288,9 @@ BigEnemy.prototype.update = function(time, gameState){
 
   newPosition = newPosition.plus( newSpeed.times(time) );
 
-  const chargingPosition = newPosition.plus( new Vector(this.drawArgs.width/3.8, this.drawArgs.height/1.4) );
+  const chargingPosition = this.position.plus( new Vector(this.drawArgs.width/3.8, this.drawArgs.height/1.4) );
   this.chargingBlast(time, gameState, chargingPosition);
-  const firePosition = newPosition.plus( new Vector(15, this.drawArgs.height - 2) );
+  const firePosition = this.position.plus( new Vector(15, this.drawArgs.height - 2) );
   this.fireBlast(time, gameState, firePosition, this.weapon.maxCharge);
 
   if ( !this.isOutOfScreen() ){
@@ -318,24 +318,34 @@ BigEnemy.prototype.chargingBlast = function(time, gameState, position){
   if(this.weapon.isReady)
     return ;
 
-  const drawArgs = copyObject(laserBoltDrawArgs);
-  drawArgs.x = position.x;
-  drawArgs.y = position.y;
-  drawArgs.width  += 20;
-  drawArgs.height += 20;
-  //draw yellow and red bolt to make charging laser naimation
-  var redOrYellowBolt = null;
-  if (this.weapon.charingTime < 0.8) {
-    redOrYellowBolt = getRandomElement( ["red bolt", "yellow bolt"] );
-  }else {
-    redOrYellowBolt = "red bolt";
+
+  var chargingBlast = null;
+
+  if (position) {
+
+    const drawArgs = copyObject(laserBoltDrawArgs);
+    drawArgs.x = position.x;
+    drawArgs.y = position.y;
+    drawArgs.width  += 20;
+    drawArgs.height += 20;
+    //draw yellow and red bolt to make charging laser naimation
+    var redOrYellowBolt = null;
+    if (this.weapon.charingTime < 0.8) {
+      redOrYellowBolt = getRandomElement( ["red bolt", "yellow bolt"] );
+    }else {
+      redOrYellowBolt = "red bolt";
+    }
+
+    chargingBlast = new MovingObject(position, new Vector(0, 0), drawArgs, "charging blast", 0, 1);
+    drawArgs.sx = chargingBlast.getSpriteX(laserTypes[redOrYellowBolt].spriteIndex.x)*2 + 5 ;
+    drawArgs.sy = chargingBlast.getSpriteY(laserTypes[redOrYellowBolt].spriteIndex.y);
+
   }
 
-  const chargingBlast = new MovingObject(position, new Vector(0, 0), drawArgs, "charging blast", 0, 1);
-  drawArgs.sx = chargingBlast.getSpriteX(laserTypes[redOrYellowBolt].spriteIndex.x)*2 + 5 ;
-  drawArgs.sy = chargingBlast.getSpriteY(laserTypes[redOrYellowBolt].spriteIndex.y);
 
-  gameState.actors.push(chargingBlast);
+  if (gameState) {
+    gameState.actors.push(chargingBlast);
+  }
 
   this.weapon.charingTime -= time;
 
@@ -379,17 +389,3 @@ BigEnemy.prototype.fireBlast = function(time, gameState, position, maxCharge, sp
 
 
 }
-
-/*
-const redOrYellowImg = getRandomElement( [redBlastImg, yellowBlastImg] );
-
-const position = new Vector(400,50);
-const drawArgs = copyObject(laserBoltDrawArgs);
-drawArgs.img = redOrYellowImg;
-drawArgs.x = position.x;
-drawArgs.y = position.y;
-drawArgs.swidth  = 36;
-drawArgs.sheight = 47;
-drawArgs.width  = 100;
-drawArgs.height = 600;
-*/

@@ -33,12 +33,18 @@ const explosionDrawArgs = {
 Canvas.prototype.drawExplode = function(time, movingObject){
 
   const drawArgs = copyObject(explosionDrawArgs);
-  drawArgs.x  = movingObject.position.x ;
-  drawArgs.y  = movingObject.position.y ;
+  drawArgs.x  = movingObject.position.x;
+  if (movingObject.type.includes("laser") ) {
+    drawArgs.y  = movingObject.position.y + ( movingObject.speed.y * time * 4 );
+  }
+  else {
+    drawArgs.y  = movingObject.position.y;
+  }
+
   const spriteIndex = ( Math.floor( (1 - movingObject.takingDamage)/time )%5 );
   drawArgs.sx = spriteIndex * 16;
-  drawArgs.width = movingObject.drawArgs.width/1.5;
-  drawArgs.height = movingObject.drawArgs.height/1.5;
+  drawArgs.width = movingObject.drawArgs.width;
+  drawArgs.height = movingObject.drawArgs.height;
 
   this.ctx.drawImage( ...getDrawArgs(drawArgs) );
 }
@@ -156,19 +162,5 @@ Canvas.prototype.drawActorBorder = function(actor, angle, style){
 /******************************************************************************/
 Canvas.prototype.update = function(time){
   this.clear();
-
-  /*this.ctx.save();
-  drawArgs.x = -drawArgs.width/2;
-  drawArgs.y = -0;
-
-  this.ctx.translate(position.x,position.y);
-  this.ctx.translate(drawArgs.width/2,0);
-
-  this.ctx.rotate(timeSum);
-
-  this.ctx.drawImage( ...getDrawArgs(drawArgs) );
-
-  this.ctx.restore();*/
-
   this.drawActors(time);
 }

@@ -252,7 +252,7 @@ function generateWave(waveArray, actors){
       actor = BlackHole.create(positionX);
     }
     else if ( waveArray[i].includes("FB") ) {
-      actor = FinalBoss.create(new Vector(900, 0), 0.5, 900);
+      actor = FinalBoss.create(new Vector(900, 0), 0.1, 900);
     }
 
     if (actor) {

@@ -16,6 +16,7 @@ div.game-window
   background-color: #62225c;
   border:black solid 2px;
   position: relative;
+  display: none;
 }
 
 .screen-title

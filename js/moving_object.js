@@ -42,7 +42,7 @@ MovingObject.prototype.isOutOfScreen = function(){
 }
 
 /******************************************************************************/
-const shift = 0;
+const shift = 5;
 
 MovingObject.prototype.collideWith = function(movingObject){
 
@@ -93,14 +93,20 @@ MovingObject.prototype.tookDamageFrom = function(movingObject){
 
     if(this.type === "player"){
       this.damage = playerShipDamage;
-      this.takingDamage = 1;
+      this.takingDamage = 1; //put some time before this can take damage again
     }else {
-      this.takingDamage = 0.5; //put some time before this can take damage again
+      this.takingDamage = 0.5;
     }
 
   }
   if (!movingObject.takingDamage && this.damage){
-    movingObject.takingDamage = 0.5;
+
+    if (movingObject.type.includes("laser") ) {
+      movingObject.takingDamage = 0.1;
+    }
+    else {
+      movingObject.takingDamage = 0.5;
+    }
   }
 
   if(this.hp === 0){
@@ -125,6 +131,12 @@ MovingObject.prototype.update = function(time, gameState){
 
   if(this.type === "meteor"){
     speed = backgroundSpeed.plus( new Vector(0 ,200) );
+  }
+
+  if (this.type === "blue laser") {
+    const type = getRandomElement(["blue laser", "blue laser2"]);
+    this.drawArgs.sx = this.getSpriteX(laserTypes[type].spriteIndex.x)*2 + 5 ;
+    this.drawArgs.sy = this.getSpriteY(laserTypes[type].spriteIndex.y);
   }
 
   var newPosition = this.position;

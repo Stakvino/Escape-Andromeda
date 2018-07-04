@@ -3,8 +3,8 @@ const FBYellowSprites = DOM.createImg("img/Ships/final-boss-yellow.png");
 const FBRedSprites    = DOM.createImg("img/Ships/final-boss-red.png");
 const FBswidth = 125;
 
-const FBPosition = new Vector( ( (canvasWidth / 2) - 50 ), 0);
-const FBHp    = 100;
+const FBPosition = new Vector( ( (canvasWidth / 2) - FBswidth/2 ), 0);
+const FBHp    = 600;
 const FBSpeed = new Vector(900, 0);
 
 const FBDrawArgs = {
@@ -18,10 +18,10 @@ const FBDrawArgs = {
   width  : FBswidth,
   height : 170
 }
-
-const FBPhasesDuration = {"wait" : 1, "charge bolt" : 1, "charge blast" : 1,"shadow" : 1, "laser blast" : 1};
-const FBPhasesLoop = ["wait", "charge bolt", "laser bolt","wait", "charge blast", "laser blast", "wait", "charge bolt","shadow", "laser blast"];
-const lastWave = ["M","S","#","BH","#"];
+//const FBPhasesDuration = {"wait" : 2, "charge bolt" : 2, "charge blast" : 2,"shadow" : 10, "laser blast" : 6, "laser bolt" : 4};
+const FBPhasesDuration = {"wait" : 1, "charge bolt" : 1, "charge blast" : 1,"shadow" : 1, "laser blast" : 4, "laser bolt" : 1};
+const FBPhasesLoop = ["wait", "charge bolt", "laser bolt","wait", "charge blast", "laser blast", "wait", "charge bolt","shadow"];
+const lastWave = ["M","HR","S","SR","BH","#"];
 
 var phaseStarted = false;
 var phaseTime    = 0;
@@ -43,7 +43,7 @@ class FinalBoss extends SpaceShip {
       timeBeforeReady : 0,
       charingTime     : charingTime,
       laserSpeed      : laserSpeed,
-      maxCharge       : 10
+      maxCharge       : 6
     }
     return new FinalBoss(FBPosition, speed, FBDrawArgs, "final boss", 3, FBHp, 0, weapon, 0);
   }
@@ -51,12 +51,23 @@ class FinalBoss extends SpaceShip {
 }
 
 /******************************************************************************/
+var test = false;
+const borrowedMedium = new MediumEnemy();
+const borrowedBig    = new BigEnemy();
 
 FinalBoss.prototype.update = function(time, gameState){
 
 
   if (this.takingDamage > 0){
-    this.takingDamage -= time > this.takingDamage ? this.takingDamage : time;
+
+    if (this.hp === 0) {
+      this.takingDamage -= time/10 > this.takingDamage ? this.takingDamage : time/10;
+      return this;
+    }
+    else {
+      this.takingDamage -= time > this.takingDamage ? this.takingDamage : time;
+    }
+
   }
 
   if (!phaseStarted) {
@@ -69,22 +80,19 @@ FinalBoss.prototype.update = function(time, gameState){
 
   const phaseName  = FBPhasesLoop[phaseNumber];
 
+  if ( !phaseName.includes("laser") ) {
+    borrowedBig.chargingBlast.call(this, time);
+  }
+
   const phaseEnded = this[phaseName](time, gameState);
 
   if(phaseEnded){
-
-    if (phaseName === "laser bolt") {
-      this.angle = 0;
-    }
-    else if (phaseName === "laser blast") {
-      this.weapon.isReady = false;
-      this.weapon.charingTime = 0;
-    }
 
     phaseNumber++;
 
     if (phaseNumber === FBPhasesLoop.length) {
       phaseNumber = 0;
+      test = true;
     }
 
   }
@@ -99,24 +107,45 @@ FinalBoss.prototype.phaseEnded = function(){
 
   const phaseName = FBPhasesLoop[phaseNumber];
 
-  if (phaseTime >= FBPhasesDuration[phaseName] || this.angle >= 2 * Math.PI ) {
+  if ( phaseTime >= FBPhasesDuration[phaseName] ){
     phaseStarted = false;
+
+    if (phaseName === "charge bolt") {
+      this.weapon.charingTime = 0.1;
+    }
+    else if (phaseName === "laser bolt") {
+      boltPositionX = 0;
+      this.weapon.timeBeforeReady = 0;
+    }
+    else if (phaseName === "charge blast") {
+      this.angle = 1;
+    }
+    else if (phaseName === "laser blast") {
+      this.angle = 0;
+    }
+    else if (phaseName === "shadow") {
+      lastWaveGenerated = false;
+    }
+
+    return true;
   }
 
-  if ( phaseName === "laser bolt" ) {
-    return this.angle >= 2 * Math.PI;
-  }
-
-  return phaseTime >= FBPhasesDuration[phaseName];
+  return false;
 }
 
 /******************************************************************************/
 
 FinalBoss.prototype["wait"] = function(time, gameState){
 
-  this.angle = 0;
   this.drawArgs.img    = FBSprites;
-  this.drawArgs.sx     = 0;
+
+  if (this.takingDamage > 0) {
+    this.drawArgs.sx = FBswidth;
+  }
+  else {
+    this.drawArgs.sx = 0;
+  }
+
   this.drawArgs.swidth = FBswidth;
   this.drawArgs.width  = FBswidth
 
@@ -130,6 +159,7 @@ FinalBoss.prototype["wait"] = function(time, gameState){
   this.drawArgs.x = this.position.x;
   this.drawArgs.y = this.position.y;
 
+
   return this.phaseEnded();
 }
 
@@ -138,27 +168,32 @@ FinalBoss.prototype["wait"] = function(time, gameState){
 FinalBoss.prototype["charge bolt"] = function(time){
 
   const redOrYellowSprite = getRandomElement( [FBYellowSprites, FBRedSprites] );
+  this.drawArgs.sx  = 0;
   this.drawArgs.img = redOrYellowSprite;
 
   return this.phaseEnded();
 }
 
 /******************************************************************************/
+const distanceBetweenBolts = 145;
+var boltPositionX = 0;
+const FBboltSize = new Vector(50,80);
 
 FinalBoss.prototype["laser bolt"] = function(time, gameState){
-
-  if (this.angle > Math.PI/2) {
-    this.angle -= time;
-  }
-  else if (this.angle < -Math.PI/2) {
-    this.angle += time;
-  }
 
   this.drawArgs.img   = FBSprites;
   this.drawArgs.sx    = FBswidth;
 
   this.weapon.name = getRandomElement(["yellow bolt", "red bolt"]);
-  this.fireGun(time, gameState, new Vector(0, this.weapon.laserSpeed), new Vector(this.position.x, this.position.y), new Vector(50,80) );
+
+  var boltPosition = new Vector(boltPositionX , -FBboltSize.y*2);
+  if(this.weapon.isReady){
+    boltPositionX += distanceBetweenBolts;
+  }
+  if(boltPositionX > canvasWidth)
+    boltPositionX = boltPositionX%canvasWidth;
+
+  this.fireGun(time, gameState, new Vector(0, this.weapon.laserSpeed),boltPosition, FBboltSize );
   this.chargeWeapon(time);
 
   return this.phaseEnded();
@@ -182,33 +217,30 @@ FinalBoss.prototype["charge blast"] = function(time){
 
 FinalBoss.prototype["laser blast"] = function(time, gameState){
 
-  if(!this.weapon.isReady){
-    this.weapon.isReady = true;
-    this.angle = 1;
-  }
-
   this["charge blast"]();
 
   this.position = this.position.plus( this.speed.times(time) );
   this.drawArgs.x = this.position.x;
   this.drawArgs.y = this.position.y;
 
-  const laserPosition = this.position.plus(new Vector(-this.drawArgs.width/10, this.drawArgs.height/1.5) );
+  const laserPosition = this.position.plus(new Vector(-this.drawArgs.width/8, this.drawArgs.height/1.5) );
 
-  new BigEnemy().fireBlast.call(this, time, gameState, laserPosition, this.weapon.maxCharge);
-  new MediumEnemy().moveRightAndLeft.call(this);
+  borrowedBig.fireBlast.call(this, time, gameState, laserPosition, this.weapon.maxCharge);
+  borrowedMedium.moveRightAndLeft.call(this);
 
   return this.phaseEnded();
 }
 
 /******************************************************************************/
+var lastWaveGenerated = false;
 
 FinalBoss.prototype["shadow"] = function(time, gameState){
 
   const actors = gameState.actors;
 
-  if ( waveFinished(actors, lastWave) ) {
+  if ( !lastWaveGenerated ) {
     generateWave(lastWave, actors);
+    lastWaveGenerated = true;
   }
   generateRandomMeteors(actors, 0.1);
 

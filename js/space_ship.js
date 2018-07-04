@@ -12,7 +12,8 @@ const laserBoltImg = DOM.createImg("img/Ships/laser-bolts.png");
 const laserTypes = {
   "yellow bolt" : {spriteIndex : {x : 0, y : 0}, damage : 2},
   "red bolt"    : {spriteIndex : {x : 1, y : 0}, damage : 1},
-  "blue laser"  : {spriteIndex : {x : 0, y : 1}, damage : 1}
+  "blue laser"  : {spriteIndex : {x : 0, y : 1}, damage : 1},
+  "blue laser2"  : {spriteIndex : {x : 1, y : 1}, damage : 1}
 }
 
 const laserBoltDrawArgs = {
@@ -39,6 +40,8 @@ SpaceShip.prototype.createLaserBolt = function(speed, boltSize, position){
   drawArgs.y = position.y;
   drawArgs.width  = boltSize.x;
   drawArgs.height = boltSize.y;
+
+
   var damage = 0;
 
   damage = laserTypes[this.weapon.name].damage;
@@ -52,18 +55,20 @@ SpaceShip.prototype.createLaserBolt = function(speed, boltSize, position){
 
 /******************************************************************************/
 
-SpaceShip.prototype.fireGun = function(time, gameState, speed, position, boltSize = new Vector(30,50) ){
+SpaceShip.prototype.fireGun = function(time, gameState, speed, position, boltSize = new Vector(25,45) ){
 
   const weapon = this.weapon;
 
   if (weapon.isReady){
+    gameState.actors.push( this.createLaserBolt(speed, boltSize, position) );
     weapon.timeBeforeReady  = weapon.charingTime;
     weapon.isReady = false;
-    gameState.actors.push( this.createLaserBolt(speed, boltSize, position) );
   }
 
 
 }
+
+/******************************************************************************/
 
 SpaceShip.prototype.chargeWeapon = function(time){
 

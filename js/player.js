@@ -1,4 +1,4 @@
-const playerInitialPosition = new Vector(0,500);
+const playerInitialPosition = new Vector(450,500);
 const playerNormalSpeed     = new Vector(500,400);
 
 const playerSprites = DOM.createImg("img/Ships/player.png");
@@ -107,8 +107,8 @@ Player.prototype.update = function(time, gameState){
   }
 
   if (gameKeys["KeyA"]){
-    const laserPosition = this.position.plus( new Vector(this.drawArgs.width/4, 0) );
-    this.fireGun(time, gameState, this.weapon.laserSpeed, laserPosition);
+    const laserPosition = this.position.plus( new Vector(this.drawArgs.width/3.2, 10) );
+    this.fireGun(time, gameState, this.weapon.laserSpeed, laserPosition, new Vector(25,45) );
   }
   this.chargeWeapon(time);
 
