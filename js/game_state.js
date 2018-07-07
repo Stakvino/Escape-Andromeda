@@ -66,14 +66,20 @@ GameState.prototype.update = function(time){
   const wave = levels[levelNumber][waveNumber] || levels[levelNumber][0];
   const lastElement = wave[ wave.length - 1 ];
 
-  if( Number.isInteger(timeSum/4) && endingTime === 0 && !pressStartScreen){
+  if( ( Number.isInteger(timeSum/4) && endingTime === 0 && !pressStartScreen )
+    || ( wave[0] === "T" && tutorialIsDone ) || ( wave[0] === "C" && storyIsTold ) ){
 
-    generateLevel(levels[levelNumber], updatedActors);
+    generateLevel(levelNumber, updatedActors);
 
-    if ( waveNumber === ( levels[levelNumber].length ) &&  waveFinished(actors, wave) ) {
+    if ( waveNumber === ( levels[levelNumber].length ) &&  waveFinished(updatedActors, wave) ) {
       waveNumber = 0;
       levelNumber++;
-      DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], 5000);
+
+      var title = `level ${levelNumber+1}`;
+      const message = levels[levelNumber][0];
+
+      if(levelNumber === levels.length - 1) title = "boss";
+      DOM.renderMessage(title,message , 4000);
     }
 
   }
@@ -101,12 +107,19 @@ GameState.prototype.update = function(time){
 
   if (endingTime >= 3) {
     renderState(levelNumber + 1);
-    endingTime = 0;
-    waveNumber = 0;
+    endingTime  = 0;
+    waveNumber  = 0;
+    phaseNumber = 0;
+    boltPositionX = 0;
     const newPlayer = Player.create();
     newState.actors.push(newPlayer);
     newState.status = "playing";
-    DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], 4000);
+
+    var title = `level ${levelNumber+1}`;
+    const message = levels[levelNumber][0];
+
+    if(levelNumber === levels.length - 1) title = "boss";
+    DOM.renderMessage(title,message , 4000);
   }
 
 

@@ -1,8 +1,8 @@
+const gameWindow = document.querySelector("div.game-window");
 const player  = Player.create();
-//const finalBoss = FinalBoss.create(new Vector(900, 0), 0.1, 800);
 
 var gameState = new GameState("playing", [player]);
-const canvas  = new Canvas(document.querySelector("div.game-window"), gameState);
+const canvas  = new Canvas(gameWindow, gameState);
 
 setTimeout(() => {
   document.querySelector(".game-window").style.display = "block";
@@ -11,6 +11,8 @@ setTimeout(() => {
 
 var pressStartScreen = true;
 var tutorialIsDone   = false;
+var storyIsTold  = false;
+var isCuttScene  = false;
 var timeSum  = 0;
 
 /******************************************************************************/
@@ -38,7 +40,7 @@ function renderState(laserSpeed, hp = playerHp, shadowForm = playerShadowForm.re
   DOM.addBar("health", hp);
   DOM.addBar("shadow", shadowForm);
   DOM.addBar("laser speed", laserSpeed);
-  playerWeapon.charingTime = 0.25 - ( 0.5 * levelNumber );
+  playerWeapon.charingTime = 0.25 - ( 0.05 * levelNumber );
 }
 
 /******************************************************************************/
@@ -49,7 +51,8 @@ addEventListener("keydown",e => {
     pressStartScreen = false;
     removeTitleScreen();
     const delay = 4000;
-    setTimeout( () => DOM.renderMessage(`level ${levelNumber+1}`, levels[levelNumber][0], 5000), delay);
+    const levelName = levels[levelNumber][0]
+    setTimeout( () => DOM.renderMessage(`level 1`, levelName, 4000), 6000);
     setTimeout(() => {
       const tutorialMessage = `use <span class="important-message">arrow keys</span> to <span class="important-message">move</span> around <br> press <span class="important-message">"Q"</span> to <span class="important-message">fire</span> laser`;
       setTimeout( () => DOM.renderMessage(``, tutorialMessage, delay*2), delay);

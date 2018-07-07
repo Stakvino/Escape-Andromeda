@@ -18,6 +18,18 @@ div.game-window
   position: relative;
   display: none;
 }
+@keyframes warning {
+  from { background-color : #62225c ; }
+  to   { background-color : "rgb(210,0,0)" ; }
+}
+.red-warning
+{
+  animation-name: warning;
+  animation-duration: 1s;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
 
 .screen-title
 {
@@ -34,7 +46,7 @@ div.game-window
 }
 
 @keyframes flashes {
-  from { opacity : 1;   }
+  from { opacity : 1; }
   to   { opacity : 0; }
 }
 .slow-flashes

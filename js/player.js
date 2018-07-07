@@ -1,4 +1,4 @@
-const playerInitialPosition = new Vector(450,500);
+const playerInitialPosition = new Vector(410,500);
 const playerNormalSpeed     = new Vector(500,400);
 
 const playerSprites = DOM.createImg("img/Ships/player.png");
@@ -82,7 +82,11 @@ Player.prototype.tookRessource = function(ressourceType){
       DOM.addBar("laser speed", 1);
       playerWeapon.charingTime -= 0.05;
       playerWeapon.charingTime = this.weapon.charingTime.toFixed(2);
+      console.log("entered and weapon became : ");
+    }else {
+      console.log("not entered weapon still : ");
     }
+    console.log("weapon",this.weapon);
   }
 
 }

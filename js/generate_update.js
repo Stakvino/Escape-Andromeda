@@ -204,40 +204,98 @@ function generateRessource(type, positionX){
 }
 
 /******************************************************************************/
-const messageTimeDelay = 4000;
+
+function renderGameMessages(){
+
+  if (levelNumber === 0 && !tutorialIsDone) {
+
+    var message  = "";
+    var messageTimeDelay = 4000;
+
+    switch (waveNumber) {
+
+      case 6:
+        message = `press <span class="important-message">"S"</span> to enter <span class="important-message">shadow form</span> <br>you will <span class="important-message">not take damage</span> while in shadow form`;
+        messageTimeDelay *= 2;
+        break;
+
+      case 9:
+        message = `<span class="important-message">red ressources</span> will restore your <span class="important-message">health</span> bar`;
+        break;
+
+      case 11:
+        message = `<span class="important-message">yellow ressources</span> will restore your <span class="important-message">shadow form</span> bar`;
+        break;
+
+      case 13:
+        message = `<span class="important-message">blue ressources</span> will make your weapon <span class="important-message">fire faster</span>`;
+        tutorialIsDone = true;
+        break;
+
+      default:
+        break;
+
+    }
+
+    DOM.renderMessage(``, message, messageTimeDelay);
+  }
+
+  else if (levelNumber === levels.length - 1 && !storyIsTold) {
+
+    var message  = "";
+    const messageTimeDelay = 4000;
+
+    switch (waveNumber) {
+
+      case 1:
+        message = `you must survive the enemy and bring the message to your planet`;
+        break;
+
+      case 2:
+        message = `that there is life out there in andromeda...`;
+        break;
+
+      case 3:
+        message = `and we are not welcome in their home...`;
+        break;
+
+      case 4:
+        message = `and that the leader of the enemy is...`;
+        break;
+
+      default:
+        break;
+
+    }
+
+    DOM.renderMessage(``, message, messageTimeDelay);
+  }
+
+}
+
+/******************************************************************************/
 
 function generateWave(waveArray, actors){
 
-  if (levelNumber === 0 && waveNumber === 6 && !tutorialIsDone) {
-    const tutorialMessage = `press <span class="important-message">"S"</span> to enter <span class="important-message">shadow form</span> <br>you will <span class="important-message">not take damage</span> while in shadow form`;
-    DOM.renderMessage(``, tutorialMessage, messageTimeDelay*2);
-  }
-  if (levelNumber === 0 && waveNumber === 9 && !tutorialIsDone) {
-    const tutorialMessage = `<span class="important-message">red ressources</span> will restore your <span class="important-message">health</span> bar`;
-    DOM.renderMessage(``, tutorialMessage, messageTimeDelay);
-  }
-  if (levelNumber === 0 && waveNumber === 11 && !tutorialIsDone) {
-    const tutorialMessage = `<span class="important-message">yellow ressources</span> will restore your <span class="important-message">shadow form</span> bar`;
-    DOM.renderMessage(``, tutorialMessage, messageTimeDelay);
-  }
-  if (levelNumber === 0 && waveNumber === 13 && !tutorialIsDone) {
-    const tutorialMessage = `<span class="important-message">blue ressources</span> will make your weapon <span class="important-message">fire faster</span>`;
-    DOM.renderMessage(``, tutorialMessage, messageTimeDelay);
-    tutorialIsDone = true;
-  }
+  renderGameMessages();
+  const laserSpeed = (650 + levelNumber * 50);
 
   for (var i = 0; i < waveArray.length; i++) {
     const positionX = (i + 1) * ( canvasWidth / (waveArray.length + 1) );
     var actor = null;
 
     if (waveArray[i] === "S") {
-      actor = SmallEnemy.create(positionX, smallSpeed, 0.6, 900);
+      const chargingTime = 0.6;
+      actor = SmallEnemy.create(positionX, smallSpeed, chargingTime, laserSpeed );
     }
     else if (waveArray[i] === "M") {
-      actor = MediumEnemy.create(positionX, mediumSpeed, 0.5, 900);
+      const chargingTime = 0.5;
+      actor = MediumEnemy.create(positionX, mediumSpeed, chargingTime, 800);
     }
     else if (waveArray[i] === "B") {
-      actor = BigEnemy.create(positionX, bigSpeed, 2, 600);
+      const chargingTime = 2;
+      const laserSpeed   = 800;
+      actor = BigEnemy.create(positionX, bigSpeed, chargingTime, laserSpeed);
     }
     else if (waveArray[i] === "HR") {
       actor = generateRessource("health", positionX);
@@ -252,7 +310,9 @@ function generateWave(waveArray, actors){
       actor = BlackHole.create(positionX);
     }
     else if ( waveArray[i].includes("FB") ) {
-      actor = FinalBoss.create(new Vector(900, 0), 0.1, 900);
+      const chargingTime = 2;
+      const laserSpeed   = 800;
+      actor = FinalBoss.create(0.1, 900);
     }
 
     if (actor) {
@@ -266,11 +326,13 @@ function generateWave(waveArray, actors){
 /******************************************************************************/
 var waveNumber = 0;
 
-function generateLevel(level, actors){
+function generateLevel(levelNumber, actors){
+
+  const level = levels[levelNumber];
 
   if ( waveNumber === 0 || waveFinished(actors, level[waveNumber]) ) {
     waveNumber++;
-    if (waveNumber >= level.length) return ;
+    if (waveNumber >= level.length || levelNumber >= levels.length) return ;
     else generateWave(level[waveNumber], actors);
   }
 
@@ -329,6 +391,10 @@ function waveToTypes(wave){
 
       case "BH":
         return "black hole";
+        break;
+
+      case "FB":
+        return "final boss";
         break;
 
       default:

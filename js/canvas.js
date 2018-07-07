@@ -33,12 +33,12 @@ const explosionDrawArgs = {
 Canvas.prototype.drawExplode = function(time, movingObject){
 
   const drawArgs = copyObject(explosionDrawArgs);
-  drawArgs.x  = movingObject.position.x;
+  drawArgs.x  = movingObject.position.x ;
   if (movingObject.type.includes("laser") ) {
-    drawArgs.y  = movingObject.position.y + ( movingObject.speed.y * time * 4 );
+    drawArgs.y  = movingObject.position.y + ( movingObject.speed.y * time * 3 );
   }
   else {
-    drawArgs.y  = movingObject.position.y;
+    drawArgs.y  = movingObject.position.y ;
   }
 
   const spriteIndex = ( Math.floor( (1 - movingObject.takingDamage)/time )%5 );

@@ -1,9 +1,11 @@
 const FBSprites       = DOM.createImg("img/Ships/final-boss.png");
 const FBYellowSprites = DOM.createImg("img/Ships/final-boss-yellow.png");
 const FBRedSprites    = DOM.createImg("img/Ships/final-boss-red.png");
-const FBswidth = 125;
+const FBswidth  = 125;
+const FBsheight = 170;
 
 const FBPosition = new Vector( ( (canvasWidth / 2) - FBswidth/2 ), 0);
+const FBSpeed = new Vector(900, 0);
 const FBHp    = 600;
 const FBSpeed = new Vector(900, 0);
 
@@ -12,16 +14,15 @@ const FBDrawArgs = {
   sx  : 0,
   sy  : 0,
   swidth  : FBswidth,
-  sheight : 170,
+  sheight : FBsheight,
   x : FBPosition.x,
-  y : FBPosition.y,
+  y : -FBsheight,
   width  : FBswidth,
-  height : 170
+  height : FBsheight
 }
-//const FBPhasesDuration = {"wait" : 2, "charge bolt" : 2, "charge blast" : 2,"shadow" : 10, "laser blast" : 6, "laser bolt" : 4};
-const FBPhasesDuration = {"wait" : 1, "charge bolt" : 1, "charge blast" : 1,"shadow" : 1, "laser blast" : 4, "laser bolt" : 1};
+const FBPhasesDuration = {"wait" : 2, "charge bolt" : 2, "charge blast" : 2,"shadow" : 10, "laser blast" : 6, "laser bolt" : 4};
 const FBPhasesLoop = ["wait", "charge bolt", "laser bolt","wait", "charge blast", "laser blast", "wait", "charge bolt","shadow"];
-const lastWave = ["M","HR","S","SR","BH","#"];
+const lastWave = ["M","HR","S","SR","BH","#","M","#"];
 
 var phaseStarted = false;
 var phaseTime    = 0;
@@ -35,7 +36,7 @@ class FinalBoss extends SpaceShip {
     this.angle = angle;
   }
 
-  static create(speed, charingTime, laserSpeed){
+  static create(charingTime, laserSpeed){
 
     const weapon = {
       name    : "destruction",
@@ -45,18 +46,39 @@ class FinalBoss extends SpaceShip {
       laserSpeed      : laserSpeed,
       maxCharge       : 6
     }
-    return new FinalBoss(FBPosition, speed, FBDrawArgs, "final boss", 3, FBHp, 0, weapon, 0);
+    const initialPosition = new Vector( ( (canvasWidth / 2) - FBswidth/2 ), - FBsheight );
+    const drawArgs = copyObject(FBDrawArgs);
+
+    return new FinalBoss(initialPosition, FBSpeed, drawArgs, "final boss", 3, FBHp, 0, weapon, 0);
   }
 
 }
 
 /******************************************************************************/
-var test = false;
+
 const borrowedMedium = new MediumEnemy();
 const borrowedBig    = new BigEnemy();
 
 FinalBoss.prototype.update = function(time, gameState){
 
+  if (this.position.y < 0) {
+    if(!isCuttScene) isCuttScene = true;
+    if( !canvas.canvas.classList.contains("red-warning") ){
+      gameWindow.style.backgroundColor = "rgb(200,0,50)";
+      canvas.canvas.classList.add("red-warning");
+    }
+
+    this.position.y += 0.68;
+    this.drawArgs.y = this.position.y;
+    return this;
+  }
+
+  if(isCuttScene) isCuttScene = false;
+  if( canvas.canvas.classList.contains("red-warning") ){
+    gameWindow.style.backgroundColor = "#62225c";
+    canvas.canvas.classList.remove("red-warning");
+  }
+  if( !storyIsTold ) storyIsTold = true;
 
   if (this.takingDamage > 0){
 
@@ -92,7 +114,6 @@ FinalBoss.prototype.update = function(time, gameState){
 
     if (phaseNumber === FBPhasesLoop.length) {
       phaseNumber = 0;
-      test = true;
     }
 
   }

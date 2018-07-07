@@ -150,7 +150,7 @@ class MediumEnemy extends SpaceShip{
 /******************************************************************************/
 
 MediumEnemy.prototype.moveRightAndLeft = function(){
-  if (this.position.x <= 5 || this.position.x >= canvasWidth - this.drawArgs.width ) {
+  if (this.position.x <= 5 || this.position.x >= canvasWidth - this.drawArgs.width/2 ) {
     this.speed = new Vector(-this.speed.x, this.speed.y);
   }
 }

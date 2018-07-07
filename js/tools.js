@@ -141,9 +141,9 @@ function trackKeys(keysArray){
   const keys = Object.create(null);
 
   function callback(event){
-    if ( keysArray.includes(event.code) && !pressStartScreen) {
+    if ( keysArray.includes(event.code) && !pressStartScreen ) {
       event.preventDefault();
-      keys[event.code] = event.type === "keydown";
+      keys[event.code] = event.type === "keydown" && !isCuttScene;
     }
   }
 
