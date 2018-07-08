@@ -63,6 +63,25 @@ GameState.prototype.update = function(time){
   timeSum += time;
   timeSum  = Number( timeSum.toFixed(2) );
 
+  if (levelNumber >= levels.length){
+    //play pok audio
+    newState.actors = updatedActors;
+    const playerStopedMoving = endingCutScene(time, newState);
+
+    if (playerStopedMoving && newState.status === "playing") {
+
+      newState.status = "end";
+
+      DOM.renderMessage("mission accomplished", "you survived the enemy and now you can get back home to deliver the message...",8000);
+      setTimeout(() => {
+        DOM.renderMessage("thx for playing", "to be continued...",1000*60);
+      },1000*12);
+
+    }
+
+    return newState;
+  }
+
   const wave = levels[levelNumber][waveNumber] || levels[levelNumber][0];
   const lastElement = wave[ wave.length - 1 ];
 
@@ -75,11 +94,14 @@ GameState.prototype.update = function(time){
       waveNumber = 0;
       levelNumber++;
 
-      var title = `level ${levelNumber+1}`;
-      const message = levels[levelNumber][0];
+      if (levelNumber < levels.length) {
+        var title = `level ${levelNumber+1}`;
+        const message = levels[levelNumber][0];
 
-      if(levelNumber === levels.length - 1) title = "boss";
-      DOM.renderMessage(title,message , 4000);
+        if(levelNumber === levels.length - 1) title = "boss";
+        DOM.renderMessage(title,message , 4000);
+      }
+
     }
 
   }
@@ -122,6 +144,35 @@ GameState.prototype.update = function(time){
     DOM.renderMessage(title,message , 4000);
   }
 
-
   return newState;
+}
+
+/******************************************************************************/
+
+function endingCutScene(time, gameState){
+
+  isCuttScene  = true;
+  const playerPosition   = gameState.getPlayer().position;
+  const previousPosition = new Vector(playerPosition.x, playerPosition.y);
+  const drawArgs = gameState.getPlayer().drawArgs;
+
+  if (playerPosition.x < ( canvasWidth/2 ) - 5) {
+    playerPosition.x++;
+  }
+  else if (playerPosition.x > ( canvasWidth/2 ) + 5) {
+    playerPosition.x--;
+  }
+
+  if (playerPosition.y < ( 5*canvasHeight/6 ) - 5 ) {
+    playerPosition.y++;
+  }
+  else if (playerPosition.y > ( 5*canvasHeight/6) + 5 )  {
+    playerPosition.y--;
+  }
+
+  drawArgs.x = playerPosition.x;
+  drawArgs.y = playerPosition.y;
+
+
+  return previousPosition.x === playerPosition.x && previousPosition.y === playerPosition.y;
 }

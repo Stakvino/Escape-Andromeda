@@ -328,6 +328,8 @@ var waveNumber = 0;
 
 function generateLevel(levelNumber, actors){
 
+  if(levelNumber >= levels.length) return;
+
   const level = levels[levelNumber];
 
   if ( waveNumber === 0 || waveFinished(actors, level[waveNumber]) ) {
@@ -398,7 +400,7 @@ function waveToTypes(wave){
         break;
 
       default:
-        return "space";
+        return "empty";
         break;
 
     }

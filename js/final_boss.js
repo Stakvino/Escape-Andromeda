@@ -6,8 +6,7 @@ const FBsheight = 170;
 
 const FBPosition = new Vector( ( (canvasWidth / 2) - FBswidth/2 ), 0);
 const FBSpeed = new Vector(900, 0);
-const FBHp    = 600;
-const FBSpeed = new Vector(900, 0);
+const FBHp    = 3;
 
 const FBDrawArgs = {
   img : FBSprites,
@@ -68,7 +67,7 @@ FinalBoss.prototype.update = function(time, gameState){
       canvas.canvas.classList.add("red-warning");
     }
 
-    this.position.y += 0.68;
+    this.position.y += time * FBsheight / 4;
     this.drawArgs.y = this.position.y;
     return this;
   }
@@ -119,7 +118,6 @@ FinalBoss.prototype.update = function(time, gameState){
   }
 
   return this;
-  //return new FinalBoss(this.position, this.speed, this.drawArgs, "final boss", 3, this.hp, this.takingDamage, this.weapon, this.angle);
 }
 
 /******************************************************************************/

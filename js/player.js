@@ -78,6 +78,7 @@ Player.prototype.tookRessource = function(ressourceType){
       this.shadowForm.remaining = playerShadowForm.remaining;
   }
   else if ( ressourceType === "laser speed ressource" ) {
+    console.log("before",this.weapon);
     if (this.weapon.charingTime > 0.1) {
       DOM.addBar("laser speed", 1);
       playerWeapon.charingTime -= 0.05;
@@ -86,7 +87,7 @@ Player.prototype.tookRessource = function(ressourceType){
     }else {
       console.log("not entered weapon still : ");
     }
-    console.log("weapon",this.weapon);
+    console.log("after",this.weapon);
   }
 
 }
