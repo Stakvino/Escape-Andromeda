@@ -134,27 +134,6 @@ DOM.renderMessage = function(title, message, delay){
 }
 
 /******************************************************************************/
-//Keyboard keys handler
-const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","KeyA","KeyS"];
-
-function trackKeys(keysArray){
-  const keys = Object.create(null);
-
-  function callback(event){
-    if ( keysArray.includes(event.code) && !pressStartScreen ) {
-      event.preventDefault();
-      keys[event.code] = event.type === "keydown" && !isCuttScene;
-    }
-  }
-
-  addEventListener("keydown",callback);
-  addEventListener("keyup",callback);
-
-  return keys;
-}
-
-const gameKeys = trackKeys(keysArray);
-/******************************************************************************/
 
 //Function to control FPS and stop resume callback function in requestAnimationFrame
 function runAnimation(frameFunc,FPS) {

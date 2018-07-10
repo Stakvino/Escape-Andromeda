@@ -94,6 +94,9 @@ Player.prototype.tookRessource = function(ressourceType){
 
 /******************************************************************************/
 
+const leftMouse  = 0;
+const rightMouse = 2;
+
 Player.prototype.update = function(time, gameState){
 
   var position     = this.position;
@@ -111,7 +114,7 @@ Player.prototype.update = function(time, gameState){
     return this;
   }
 
-  if (gameKeys["KeyA"]){
+  if ( gameKeys["KeyA"] || gameKeys[leftMouse] ){
     const laserPosition = this.position.plus( new Vector(this.drawArgs.width/3.2, 10) );
     this.fireGun(time, gameState, this.weapon.laserSpeed, laserPosition, new Vector(25,45) );
   }
@@ -146,7 +149,7 @@ Player.prototype.update = function(time, gameState){
     newSpeed.x = playerNormalSpeed.x;
   }
 
-  if (gameKeys["KeyS"]  && this.shadowForm.remaining >= 10) {
+  if ( ( gameKeys["KeyS"] || gameKeys[rightMouse] )  && this.shadowForm.remaining >= 10) {
 
     if(!this.shadowForm.isActive ){
       this.shadowForm.isActive = true;

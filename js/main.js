@@ -74,3 +74,82 @@ function removeTitleScreen(){
     },500);
   },500 );
 }
+
+/******************************************************************************/
+
+var canvasClientRects = null;
+setTimeout( () => canvasClientRects = canvas.DOMCanvas.getClientRects() , 1000);
+
+//Keyboard and mouse keys handler
+const keysArray = ["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","KeyA","KeyS", leftMouse, rightMouse];
+
+function trackKeys(keysArray){
+  const keys = Object.create(null);
+
+  function callback(event){
+    if ( keysArray.includes(event.code) && !pressStartScreen ) {
+      event.preventDefault();
+      keys[event.code] = event.type === "keydown" && !isCuttScene;
+    }
+  }
+
+  var lastPosition  = null;
+  var mouseMoveID   = null;
+
+  function mouseMove(event){
+    const positionX = event.clientX - canvasClientRects[0].left;
+    const positionY = event.clientY - canvasClientRects[0].top;
+
+    if (lastPosition === null) {
+      lastPosition = new Vector(positionX, positionY);
+    }
+    else {
+
+      if (!pressStartScreen) {
+        clearTimeout(mouseMoveID);
+        const movedX = positionX - lastPosition.x;
+        const movedY = positionY - lastPosition.y;
+
+        keys["ArrowRight"] = movedX > 0;
+        keys["ArrowLeft"]  = movedX < 0;
+        keys["ArrowUp"]    = movedY < 0;
+        keys["ArrowDown"]  = movedY > 0;
+
+        mouseMoveID = setTimeout( () => {
+          for ( var keyCode of ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"] ) {
+            keys[keyCode] = false;
+          }
+        }, 100);
+
+      }
+
+    }
+
+  }
+
+  function mouseClick(event){
+    if ( keysArray.includes(event.button) && !pressStartScreen ) {
+      event.preventDefault();
+      keys[event.button] = event.type === "mousedown" && !isCuttScene;
+    }
+  }
+
+  function preventDefault(event){
+    event.preventDefault();
+  }
+
+  addEventListener("keydown",callback);
+  addEventListener("keyup",callback);
+
+  canvas.DOMCanvas.addEventListener("mousemove",mouseMove);
+  canvas.DOMCanvas.addEventListener("mousedown",mouseClick);
+  addEventListener("mouseup",mouseClick);
+
+  canvas.DOMCanvas.addEventListener("contextmenu",preventDefault);
+  document.querySelector(".screen-title").addEventListener("contextmenu",preventDefault);
+  document.querySelector(".screen-message").addEventListener("contextmenu",preventDefault);
+
+  return keys;
+}
+
+const gameKeys = trackKeys(keysArray);

@@ -1,11 +1,12 @@
 
 class Canvas {
   constructor(parent, gameState) {
-    this.canvas = document.createElement("canvas");
-    this.canvas.width  = canvasWidth;
-    this.canvas.height = canvasHeight;
-    this.ctx = this.canvas.getContext("2d");
-    parent.appendChild(this.canvas);
+    this.DOMCanvas = document.createElement("canvas");
+    this.DOMCanvas.width  = canvasWidth;
+    this.DOMCanvas.height = canvasHeight;
+    this.DOMCanvas.classList.add("hide-cursor");
+    this.ctx = this.DOMCanvas.getContext("2d");
+    parent.appendChild(this.DOMCanvas);
 
     this.gameState = gameState;
   }
